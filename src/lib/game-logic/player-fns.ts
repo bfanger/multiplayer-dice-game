@@ -8,7 +8,6 @@ export function fakePlayer(): Player {
     id: `fake${fakePlayer.autoincrement}`,
     avatar: "anonymous.jpg",
     name: `Fake player (${fakePlayer.autoincrement})`,
-    connected: false,
   };
 }
 fakePlayer.autoincrement = 0;
@@ -19,6 +18,5 @@ export function playerFromToken(jwt: string): Player {
     id: data.oid,
     name: data.name,
     avatar: gravatar.url(data.unique_name),
-    connected: true,
   };
 }

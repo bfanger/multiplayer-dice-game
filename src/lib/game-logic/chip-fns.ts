@@ -3,7 +3,6 @@ import type { Chip } from "./types";
 export function createChip(nr: number): Chip {
   return {
     value: nr,
-    disabled: false,
   };
 }
 

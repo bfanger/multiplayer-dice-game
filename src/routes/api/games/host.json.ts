@@ -6,7 +6,6 @@ import { games } from "$lib/server/multiplayer";
 
 export function get(): EndpointOutput<{ id: string }> {
   const host = fakePlayer();
-  host.connected = true;
   const game = createGame(host);
   games[game.id] = game;
   return {

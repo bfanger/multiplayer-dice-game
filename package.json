@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently --kill-others npm:dev:*",
-    "dev:esbuild-watch": "esbuild src/server/dev-server.ts --bundle --platform=node --external:socket.io --external:express --external:http-proxy-middleware --outfile=dist/dev-server.cjs --watch",
+    "dev:esbuild-watch": "esbuild src/lib/server/dev-server.ts --bundle --platform=node --external:socket.io --external:express --external:http-proxy-middleware --outfile=dist/dev-server.cjs --watch",
     "dev:sveltekit": "svelte-kit dev",
     "dev:pm2": "pm2-dev dist/dev-server.cjs",
     "build": "svelte-kit build",

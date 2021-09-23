@@ -6,7 +6,9 @@ import { games } from "$lib/server/multiplayer";
 
 export function listGames(): Game[] {
   return Object.values<Game>(games).filter(
-    (game) => typeof game.turn === "undefined" && hostFromGame(game).connected
+    (game) =>
+      typeof game.turn === "undefined" &&
+      typeof hostFromGame(game).disconnected === "undefined"
   );
 }
 

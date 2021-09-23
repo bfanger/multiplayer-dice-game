@@ -11,16 +11,16 @@ export type Player = {
   id: string;
   name: string;
   avatar: string;
-  connected: boolean;
+  disconnected?: true;
 };
 
 export type Dice = {
   value: number;
-  banked: boolean;
+  banked?: true;
 };
 export type Chip = {
   value: number;
   playerId?: string;
   stackIndex?: number;
-  disabled: boolean;
+  disabled?: true;
 };

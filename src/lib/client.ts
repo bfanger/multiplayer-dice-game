@@ -1,6 +1,7 @@
 import type { Socket } from "socket.io";
-import { derived, writable } from "svelte/store";
-import type { Player } from "./game-logic/types";
+import { derived, get, writable } from "svelte/store";
+import type { Readable } from "svelte/store";
+import type { Game, Player } from "./game-logic/types";
 import { accessToken } from "./stores/auth";
 
 let ready: Promise<void> | undefined;
@@ -22,16 +23,53 @@ export default async function injectSocketIO(): Promise<any> {
   const win = window as unknown as { io: () => Socket };
   return win.io;
 }
-export const player = writable<Player | undefined>();
-export const socket = derived(accessToken, ($accessToken, set) => {
+const playerStore = writable<Player | undefined>(undefined);
+const gameStore = writable<Game | undefined>(undefined);
+
+const socket: Readable<Socket> = derived(accessToken, ($accessToken, set) => {
   if ($accessToken) {
     injectSocketIO().then((io) => {
-      const conn = io({ auth: { token: $accessToken } });
+      const conn: Socket = io({ auth: { token: $accessToken } });
       set(conn);
       conn.on("player", (me: Player) => {
-        player.set(me);
+        playerStore.set(me);
       });
-      // connection.send("authenticate");
+      conn.on("game", (game: Game) => {
+        gameStore.set(game);
+      });
     });
   }
 });
+
+export const player = derived([playerStore, socket], ([$player]) => $player);
+export const game = Object.assign(
+  derived([gameStore, socket], ([$game]) => $game),
+  {
+    host() {
+      const $socket = get(socket);
+      if (!$socket) {
+        throw new Error("Hosting game failed");
+      }
+      $socket.emit("host");
+    },
+
+    start() {
+      const $socket = get(socket);
+      const $game = get(game);
+      if (!$socket || !$game) {
+        throw new Error("throwing dice failed");
+      }
+      $socket.emit("start", $game.id);
+    },
+
+    throwDice() {
+      const $socket = get(socket);
+      const $player = get(player);
+      const $game = get(game);
+      if (!$socket || !$player || !$game) {
+        throw new Error("throwing dice failed");
+      }
+      $socket.emit("throw", $game.id);
+    },
+  }
+);
