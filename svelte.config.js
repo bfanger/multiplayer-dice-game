@@ -11,6 +11,7 @@ export default {
     target: "svelte-app",
     adapter: adapter(),
     vite: {
+      envPrefix: "REDIS_",
       plugins: [
         {
           name: "multiplayer",

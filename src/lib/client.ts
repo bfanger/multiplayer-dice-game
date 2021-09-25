@@ -18,8 +18,8 @@ function injectSocketIO(): Promise<(handshake: Partial<Handshake>) => Socket> {
         const win = window as any;
         resolve(win.io);
       };
-      s.onerror = reject;
-      s.onabort = reject;
+      s.onerror = () => reject(new Error("socket.io.js failed"));
+      s.onabort = () => reject(new Error("socket.io.js was aborted"));
       s.src = "/socket.io/socket.io.js";
       document.head.appendChild(s);
     });
@@ -59,23 +59,6 @@ const client = {
       };
     });
   },
-  //   const $socket = get(socket);
-  //   const $gameUpdate = get(gameUpdate);
-  //   if (!$socket || !$gameUpdate) {
-  //     throw new Error("throwing dice failed");
-  //   }
-  //   $socket.emit("start", $gameUpdate.id);
-  // },
-
-  // throwDice() {
-  //   const $socket = get(socket);
-  //   const $player = get(player);
-  //   const $game = get(gameUpdate);
-  //   if (!$socket || !$player || !$game) {
-  //     throw new Error("throwing dice failed");
-  //   }
-  //   $socket.emit("throw", $game.id);
-  // },
 };
 
 export default client;

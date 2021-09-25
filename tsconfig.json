@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "moduleResolution": "node",
-    "target": "es2018",
+    "target": "ESNext",
+    "module": "ESNext",
     "importsNotUsedAsValues": "error",
     "isolatedModules": true,
     "sourceMap": true,
@@ -18,12 +19,5 @@
       "$lib/*": ["src/lib/*"]
     }
   },
-  "include": [
-    "src/**/*.d.ts",
-    "src/**/*.js",
-    "src/**/*.ts",
-    "src/**/*.svelte",
-    "server.ts",
-    "server.ts"
-  ]
+  "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.svelte"]
 }

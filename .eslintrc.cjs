@@ -30,6 +30,7 @@ module.exports = {
       files: ["*.js", "*.cjs"],
       rules: {
         "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/no-var-requires": "off",
       },
     },
   ],

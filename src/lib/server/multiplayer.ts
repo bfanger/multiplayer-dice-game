@@ -32,16 +32,22 @@ export async function publishGame(game: Game): Promise<void> {
  * Multiplayer Server
  */
 export function multiplayer(io: Server): void {
-  storage.subscribe("games/*", (game: Game) => {
-    io.to(`games/${game.id}`).emit(`games/${game.id}`, game);
-  });
+  storage.subscribe(
+    "games/*",
+    (game: Game) => {
+      io.to(`games/${game.id}`).emit(`games/${game.id}`, game);
+    },
+    (err) => {
+      log.error("storage.subscribe()", err);
+    }
+  );
   io.on("connection", (socket) => {
     let player: Player | undefined;
     if (socket.handshake.auth.token) {
       player = playerFromToken(socket.handshake.auth.token);
-      log(`${player.name} connected`);
+      log(`${player.name} online`);
       socket.on("disconnect", () => {
-        log(player?.name, "disconnected");
+        log(player?.name, "offline");
       });
     } else {
       log("non authenticated connection");
@@ -59,7 +65,9 @@ export function multiplayer(io: Server): void {
         }
         let leave = (leaveGame: Game, leavePlayer: Player) => {
           socket.leave(room);
-          publishGame(updatePlayer(leaveGame, playerOffline(leavePlayer)));
+          publishGame(
+            updatePlayer(leaveGame, playerOffline(leavePlayer))
+          ).catch((err) => log.error("publishGame():", err));
           log(leavePlayer.name, "left", id);
           leave = () => {};
         };
@@ -67,7 +75,9 @@ export function multiplayer(io: Server): void {
           leave(await getGameById(leaveId), player as Player);
         });
         if (!socket.disconnected) {
-          publishGame(updatePlayer(game, playerOnline(player)));
+          publishGame(updatePlayer(game, playerOnline(player))).catch((err) =>
+            log.error("publishGame():", err)
+          );
           log(player.name, "joined", id);
           socket.once("disconnect", async () => {
             leave(await getGameById(id), player as Player);

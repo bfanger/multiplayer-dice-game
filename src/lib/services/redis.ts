@@ -1,16 +1,48 @@
 import { createClient } from "redis";
+import log from "$lib/log";
 
-const client = createClient({ url: process.env.REDIS_URL });
-client.connect();
-const pubSubClient = createClient({ url: process.env.REDIS_URL });
-pubSubClient.connect();
+function urlFromEnv() {
+  if (process.env.REDIS_URL) {
+    return process.env.REDIS_URL;
+  }
+  try {
+    return import.meta.env.REDIS_URL;
+  } catch (err) {
+    return undefined;
+  }
+}
 
+const client = createClient({ url: urlFromEnv() as string });
+
+let connectPromise: Promise<void> | undefined;
+let errorOnce = true;
+async function autoConnect(): Promise<void> {
+  if (!connectPromise) {
+    errorOnce = true;
+    connectPromise = client.connect();
+  }
+  await connectPromise;
+}
+client.on("error", (err) => {
+  if (errorOnce) {
+    log.error("Redis:", err);
+    errorOnce = false;
+  }
+});
+client.on("connect", () => {
+  log("Redis up");
+});
+client.on("disconnect", () => {
+  connectPromise = undefined;
+  log("Redis down");
+});
 async function get<T extends unknown>(key: string): Promise<T | undefined>;
 async function get<T extends unknown>(key: string, fallback: T): Promise<T>;
 async function get<T extends unknown>(
   key: string,
   fallback?: T
 ): Promise<T | undefined> {
+  await autoConnect();
   const value = await client.get(key);
   if (value === null) {
     return fallback;
@@ -24,31 +56,58 @@ async function set(
 ): Promise<void> {
   const data = JSON.stringify(value);
   const config = options ? { EX: options.ttl } : {};
+  await autoConnect();
   await client.set(key, data, config);
   client.publish(key, data);
 }
 async function all<T>(query: string): Promise<T[]> {
+  await autoConnect();
   const keys = await client.keys(query);
   const values = await Promise.all(keys.map((key) => get<T>(key)));
   return values.filter((value) => typeof value !== "undefined") as T[];
 }
 function subscribe<T>(
   channel: string,
-  listener: (value: T) => void
+  next: (value: T) => void,
+  error?: (err: Error) => void
 ): () => void {
   const wrapped = (data: string) => {
-    listener(JSON.parse(data));
+    next(JSON.parse(data));
   };
-  if (channel.endsWith("*")) {
-    pubSubClient.pSubscribe(channel, wrapped);
-    return function unsubscribe() {
-      pubSubClient.pUnsubscribe(channel, wrapped);
-    };
+  let aborted = false;
+  let unsubscribe = () => {
+    aborted = true;
+  };
+  function onError(err: Error) {
+    if (!error) {
+      throw err;
+    }
+    error(err);
   }
-  pubSubClient.subscribe(channel, wrapped);
-  return function unsubscribe() {
-    pubSubClient.unsubscribe(channel, wrapped);
-  };
+  const subscriber = createClient({ url: urlFromEnv() as string });
+  subscriber
+    .connect()
+    .then(() => {
+      if (aborted) {
+        return;
+      }
+      let once = true;
+      subscriber.on("error", (err) => {
+        if (once) {
+          once = false;
+          onError(err);
+        }
+      });
+      if (channel.endsWith("*")) {
+        subscriber.pSubscribe(channel, wrapped);
+        unsubscribe = () => subscriber.pUnsubscribe(channel, wrapped);
+      } else {
+        subscriber.subscribe(channel, wrapped);
+        unsubscribe = () => subscriber.unsubscribe(channel, wrapped);
+      }
+    })
+    .catch(onError);
+  return () => unsubscribe();
 }
 const storage = {
   get,

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import { v4 as uuid } from "uuid";
 import { shuffle } from "lodash-es";
 import type { Game, Player } from "./types";
@@ -35,15 +34,28 @@ export function startGame(game: Game): Game {
   const players = shuffle(game.players);
   return {
     ...game,
+    phase: "BEGIN",
     players,
     turn: players[0].id,
+  };
+}
+
+export function updatePlayer(game: Game, player: Player): Game {
+  // @todo throw error when player is not participating?
+  return {
+    ...game,
+    players: game.players.map((p) => {
+      if (p.id === player.id) {
+        return player;
+      }
+      return p;
+    }),
   };
 }
 
 export function joinGame(game: Game, player: Player): Game {
   if (game.turn) {
     // @todo Disable joining after start?
-    // throw new Error("Already started");
   }
   if (game.players.some((p) => p.id === player.id)) {
     return updatePlayer(game, player); // already joined
@@ -58,6 +70,7 @@ export function throwDice(game: Game, player: Player): Game {
   if (player.id !== game.turn) {
     throw new Error("Not your turn");
   }
+  const phase: Game["phase"] = "THROWN";
   const dices = game.dices.map((dice) => {
     if (dice.banked) {
       return dice;
@@ -67,17 +80,7 @@ export function throwDice(game: Game, player: Player): Game {
   // @todo rules
   return {
     ...game,
+    phase,
     dices,
-  };
-}
-export function updatePlayer(game: Game, player: Player): Game {
-  return {
-    ...game,
-    players: game.players.map((p) => {
-      if (p.id === player.id) {
-        return player;
-      }
-      return p;
-    }),
   };
 }
