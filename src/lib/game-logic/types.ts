@@ -11,7 +11,7 @@ export type Player = {
   id: string;
   name: string;
   avatar: string;
-  disconnected?: true;
+  connected?: true;
 };
 
 export type Dice = {

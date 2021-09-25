@@ -2,7 +2,7 @@ import express from "express";
 import { Server } from "socket.io";
 import http from "http";
 import { createProxyMiddleware } from "http-proxy-middleware";
-import multiplayer from "./multiplayer";
+import { multiplayer } from "./multiplayer";
 
 const { PORT = 8080 } = process.env;
 const app = express();

@@ -1,5 +1,15 @@
 # Online Multiplayer Dice game
 
+# Setup (macOS)
+
+```sh
+brew install redis
+brew services start redis
+yarn install
+```
+
+[Redis](https://redis.io/) is used to share state between the sveltekit server and the process running socket.io
+
 ## Data structure
 
 - Game[] (collection)
@@ -25,11 +35,11 @@
 
 (All calls require auth)
 
-### POST /api/games/host
+### POST /api/games.json
 
 returns new game id (`turn` is empty)
 
-### GET /api/games/list
+### GET /api/games.json
 
 list of games without `turn` (id, host, nr players)
 

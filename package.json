@@ -4,9 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently --kill-others npm:dev:*",
-    "dev:esbuild-watch": "esbuild src/lib/server/dev-server.ts --bundle --platform=node --external:socket.io --external:express --external:http-proxy-middleware --outfile=dist/dev-server.cjs --watch",
+    "dev:esbuild-watch": "esbuild src/lib/server/multiplayer.ts --bundle --platform=node --outfile=dist/multiplayer.cjs --watch",
     "dev:sveltekit": "svelte-kit dev",
-    "dev:pm2": "pm2-dev dist/dev-server.cjs",
     "build": "svelte-kit build",
     "preview": "svelte-kit preview",
     "lint": "prettier --check --loglevel=warn 'src/**/*.svelte' && tsc --noEmit && svelte-check --fail-on-warnings --fail-on-hints && eslint --ext=js,ts --max-warnings=0 src",
@@ -68,6 +67,7 @@
     "http-proxy-middleware": "^2.0.1",
     "jwt-decode": "^3.1.2",
     "lodash-es": "^4.17.21",
+    "redis": "^4.0.0-rc.2",
     "socket.io": "^4.2.0",
     "svelte": "^3.42.6",
     "uuid": "^8.3.2"

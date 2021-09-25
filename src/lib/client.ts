@@ -1,75 +1,81 @@
-import type { Socket } from "socket.io";
-import { derived, get, writable } from "svelte/store";
+import { readable } from "svelte/store";
 import type { Readable } from "svelte/store";
+import type { Handshake, Socket } from "socket.io/dist/socket";
 import type { Game, Player } from "./game-logic/types";
-import { accessToken } from "./stores/auth";
+import api from "./services/api";
+import type { Fetch } from "./services/api";
+import auth from "./services/auth";
 
-let ready: Promise<void> | undefined;
-export default async function injectSocketIO(): Promise<any> {
-  if (typeof ready === "undefined") {
-    ready = new Promise((resolve, reject) => {
+let ioPromise: ReturnType<typeof injectSocketIO> | undefined;
+function injectSocketIO(): Promise<(handshake: Partial<Handshake>) => Socket> {
+  if (typeof window === "undefined") {
+    throw new Error("socket.io client is not available in SSR");
+  }
+  if (typeof ioPromise === "undefined") {
+    ioPromise = new Promise((resolve, reject) => {
       const s = document.createElement("script");
-      s.onload = () => resolve();
+      s.onload = () => {
+        const win = window as any;
+        resolve(win.io);
+      };
       s.onerror = reject;
       s.onabort = reject;
       s.src = "/socket.io/socket.io.js";
       document.head.appendChild(s);
     });
   }
-  await ready;
-  if (typeof window === "undefined") {
-    throw new Error("socket.io client is not available in SSR");
-  }
-  const win = window as unknown as { io: () => Socket };
-  return win.io;
+  return ioPromise;
 }
-const playerStore = writable<Player | undefined>(undefined);
-const gameStore = writable<Game | undefined>(undefined);
+const client = {
+  async me(fetch?: Fetch): Promise<Player> {
+    const accessToken = await auth.accessToken().catch(() => false);
+    if (!accessToken) {
+      throw new Error("Not logged in");
+    }
+    return api.get("me.json", { fetch }); // @todo cache player info?
+  },
+  async createGame(): Promise<string> {
+    const response = await api.post(`games.json`, "");
+    return response.id;
+  },
 
-const socket: Readable<Socket> = derived(accessToken, ($accessToken, set) => {
-  if ($accessToken) {
-    injectSocketIO().then((io) => {
-      const conn: Socket = io({ auth: { token: $accessToken } });
-      set(conn);
-      conn.on("player", (me: Player) => {
-        playerStore.set(me);
-      });
-      conn.on("game", (game: Game) => {
-        gameStore.set(game);
-      });
+  async startGame(id: string): Promise<void> {
+    await api.post(`games/[id]/start.json`, "", { params: { id } });
+  },
+  async throwDice(id: string): Promise<void> {
+    await api.post(`games/[id]/throw.json`, "", { params: { id } });
+  },
+  async gameState(id: string): Promise<Readable<Game>> {
+    const io = await injectSocketIO();
+    const accessToken = await auth.accessToken().catch(() => undefined);
+    return readable<Game>(undefined, (set) => {
+      const socket = io({ auth: { token: accessToken } });
+      socket.on(`games/${id}`, set);
+      socket.emit("join", id);
+      return () => {
+        socket.off(`games/${id}`, set);
+        socket.emit("leave", id);
+        socket.disconnect();
+      };
     });
-  }
-});
+  },
+  //   const $socket = get(socket);
+  //   const $gameUpdate = get(gameUpdate);
+  //   if (!$socket || !$gameUpdate) {
+  //     throw new Error("throwing dice failed");
+  //   }
+  //   $socket.emit("start", $gameUpdate.id);
+  // },
 
-export const player = derived([playerStore, socket], ([$player]) => $player);
-export const game = Object.assign(
-  derived([gameStore, socket], ([$game]) => $game),
-  {
-    host() {
-      const $socket = get(socket);
-      if (!$socket) {
-        throw new Error("Hosting game failed");
-      }
-      $socket.emit("host");
-    },
+  // throwDice() {
+  //   const $socket = get(socket);
+  //   const $player = get(player);
+  //   const $game = get(gameUpdate);
+  //   if (!$socket || !$player || !$game) {
+  //     throw new Error("throwing dice failed");
+  //   }
+  //   $socket.emit("throw", $game.id);
+  // },
+};
 
-    start() {
-      const $socket = get(socket);
-      const $game = get(game);
-      if (!$socket || !$game) {
-        throw new Error("throwing dice failed");
-      }
-      $socket.emit("start", $game.id);
-    },
-
-    throwDice() {
-      const $socket = get(socket);
-      const $player = get(player);
-      const $game = get(game);
-      if (!$socket || !$player || !$game) {
-        throw new Error("throwing dice failed");
-      }
-      $socket.emit("throw", $game.id);
-    },
-  }
-);
+export default client;

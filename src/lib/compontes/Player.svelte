@@ -2,9 +2,10 @@
   export let name: string;
   export let avatar: string;
   export let active = false;
+  export let disabled = false;
 </script>
 
-<div class="player" class:active>
+<div class="player" class:active class:disabled>
   <img class="avatar" src={avatar} alt="" />
   <span>{name}</span>
 </div>
@@ -21,6 +22,9 @@
     &.active {
       background-color: white;
       color: black;
+    }
+    &.disabled {
+      opacity: 0.5;
     }
   }
   .avatar {

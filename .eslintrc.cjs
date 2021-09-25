@@ -25,6 +25,14 @@ module.exports = {
       },
     },
   },
+  overrides: [
+    {
+      files: ["*.js", "*.cjs"],
+      rules: {
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+      },
+    },
+  ],
   rules: {
     "@typescript-eslint/no-explicit-any": "off",
     "import/extensions": ["error", "ignorePackages", { ts: "never" }],

@@ -6,7 +6,7 @@ describe("startGame()", () => {
   it("should assign a turn", () => {
     const game = createGame(host);
     expect(game.turn).toBeUndefined();
-    startGame(game);
-    expect(typeof game.turn).toBe("string");
+    const startedGame = startGame(game);
+    expect(typeof startedGame.turn).toBe("string");
   });
 });

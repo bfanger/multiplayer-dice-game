@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { v4 as uuid } from "uuid";
 import { shuffle } from "lodash-es";
@@ -29,34 +28,56 @@ export function hostFromGame(game: Game): Player {
   return host;
 }
 
-export function startGame(game: Game): void {
+export function startGame(game: Game): Game {
   if (game.turn) {
     throw new Error("Already started");
   }
-  game.players = shuffle(game.players);
-  game.turn = game.players[0].id;
+  const players = shuffle(game.players);
+  return {
+    ...game,
+    players,
+    turn: players[0].id,
+  };
 }
 
-export function joinGame(game: Game, player: Player): void {
+export function joinGame(game: Game, player: Player): Game {
   if (game.turn) {
     // @todo Disable joining after start?
     // throw new Error("Already started");
   }
   if (game.players.some((p) => p.id === player.id)) {
-    return; // already joined
+    return updatePlayer(game, player); // already joined
   }
-  game.players.push(player);
+  return {
+    ...game,
+    players: [...game.players, player],
+  };
 }
 
-export function throwDice(game: Game, player: Player): void {
+export function throwDice(game: Game, player: Player): Game {
   if (player.id !== game.turn) {
     throw new Error("Not your turn");
   }
-  game.dices = game.dices.map((dice) => {
+  const dices = game.dices.map((dice) => {
     if (dice.banked) {
       return dice;
     }
     return rollDice();
   });
   // @todo rules
+  return {
+    ...game,
+    dices,
+  };
+}
+export function updatePlayer(game: Game, player: Player): Game {
+  return {
+    ...game,
+    players: game.players.map((p) => {
+      if (p.id === player.id) {
+        return player;
+      }
+      return p;
+    }),
+  };
 }

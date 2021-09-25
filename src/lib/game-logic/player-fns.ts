@@ -20,3 +20,16 @@ export function playerFromToken(jwt: string): Player {
     avatar: gravatar.url(data.unique_name),
   };
 }
+
+export function playerOnline(player: Player): Player {
+  return {
+    ...player,
+    connected: true,
+  };
+}
+export function playerOffline(player: Player): Player {
+  return {
+    ...player,
+    connected: undefined,
+  };
+}
