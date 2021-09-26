@@ -9,10 +9,10 @@ export function createGame(): Game {
     id: uuid(),
     phase: "BEGIN",
     players: [],
-    dices: Array(7)
+    dices: Array(8)
       .fill(null)
       .map(() => rollDice()),
-    chips: Array(15)
+    chips: Array(16)
       .fill(null)
       .map((_, i) => createChip(i + 21)),
   };

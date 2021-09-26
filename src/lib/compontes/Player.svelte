@@ -22,6 +22,7 @@
     &.active {
       background-color: white;
       color: black;
+      font-weight: bold;
     }
     &.disabled {
       opacity: 0.5;

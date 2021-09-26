@@ -19,7 +19,7 @@ describe("game-fns", () => {
       const before = JSON.stringify(startedGame.dices);
       const thrown = throwDiceInGame(startedGame);
       expect(thrown.phase).toBe("THROWN");
-      expect(thrownDice(thrown.dices)).toHaveLength(7);
+      expect(thrownDice(thrown.dices)).toHaveLength(thrown.dices.length);
       expect(bankedDice(thrown.dices)).toHaveLength(0);
       expect(JSON.stringify(thrown.dices)).not.toBe(before); // is random, so could the result be the same
     });

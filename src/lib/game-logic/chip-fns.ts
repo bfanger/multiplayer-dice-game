@@ -5,7 +5,6 @@ export function createChip(nr: number): Chip {
     value: nr,
   };
 }
-
 export function chipPoints(chip: Chip): number {
   if (chip.value >= 33) {
     return 4;
