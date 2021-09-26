@@ -52,6 +52,13 @@ const client = {
       { params: { id: gameId } }
     );
   },
+  async steal(gameId: string, chipIndex: number): Promise<void> {
+    await api.post(
+      `games/[id]/steal.json`,
+      { chipIndex },
+      { params: { id: gameId } }
+    );
+  },
   async gameState(id: string): Promise<Readable<Game>> {
     const io = await injectSocketIO();
     const accessToken = await auth.accessToken().catch(() => undefined);

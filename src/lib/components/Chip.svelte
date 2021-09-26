@@ -1,16 +1,18 @@
 <script lang="ts">
   export let value: number;
   export let points: number;
-  export let flipped: boolean;
+  export let flipped = false;
+  export let disabled = false;
 </script>
 
-<div class="chip" class:flipped>
+<button class="chip" class:flipped {disabled} on:click>
   <div class="value">{value}</div>
   <div class="points">{points}</div>
-</div>
+</button>
 
 <style lang="scss">
   .chip {
+    appearance: none;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
@@ -19,6 +21,10 @@
     height: 6rem;
     border-radius: 0.6rem;
     border: #e2c184 outset 0.2rem;
+    cursor: pointer;
+    &:disabled {
+      cursor: not-allowed;
+    }
   }
   .value {
     width: 3.4rem;
@@ -29,6 +35,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    .flipped & {
+      display: none;
+    }
   }
   .points {
     font: 900 2rem sans-serif;
@@ -37,5 +46,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    .flipped & {
+      display: none;
+    }
   }
 </style>

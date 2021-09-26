@@ -21,7 +21,7 @@
 </script>
 
 <script lang="ts">
-  import Board from "$lib/compontes/Board.svelte";
+  import Board from "$lib/components/Board.svelte";
   import { onMount } from "svelte";
 
   export let player: Player | undefined;

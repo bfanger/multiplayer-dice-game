@@ -29,7 +29,11 @@
     position: relative;
     padding: 0;
     cursor: pointer;
-    &:hover {
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    &:not(:disabled):hover {
       background-color: #ffffb3;
     }
     &:active {

@@ -13,7 +13,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import client from "$lib/client";
-  import Spinner from "$lib/compontes/Spinner.svelte";
+  import Spinner from "$lib/components/Spinner.svelte";
   import auth from "$lib/services/auth";
   import type { Player } from "$lib/game-logic/types";
   import api from "$lib/services/api";

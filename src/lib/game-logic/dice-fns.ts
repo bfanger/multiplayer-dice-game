@@ -16,8 +16,17 @@ export function diceScore(dice: Dice): number {
   }
   return 0;
 }
-export function diceScoreSum(dices: Dice[]): number {
+export function diceScoreSubtotal(dices: Dice[]): number {
   return sum(dices.map(diceScore));
+}
+export function diceScoreValid(dices: Dice[]): boolean {
+  return dices.some((dice) => dice.banked && dice.value === 6);
+}
+export function diceScoreTotal(dices: Dice[]): number {
+  if (diceScoreValid(dices) === false) {
+    return 0;
+  }
+  return diceScoreSubtotal(dices);
 }
 
 export function bankedDice(dices: Dice[]): Dice[] {

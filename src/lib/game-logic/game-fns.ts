@@ -1,8 +1,18 @@
 import { v4 as uuid } from "uuid";
 import { shuffle } from "lodash-es";
-import type { Dice, Game, Player } from "./types";
-import { bankableDiceValues, rollDice } from "./dice-fns";
-import { createChip } from "./chip-fns";
+import type { Chip, Dice, Game, Player } from "./types";
+import {
+  bankableDiceValues,
+  bankedDice,
+  diceScoreTotal,
+  rollDice,
+} from "./dice-fns";
+import {
+  chipStack,
+  createChip,
+  chipStealError,
+  chipStealable,
+} from "./chip-fns";
 
 export function createGame(): Game {
   return {
@@ -70,7 +80,55 @@ export function joinGame(game: Game, ...players: Player[]): Game {
     players: combined,
   };
 }
+function nextPlayerId(game: Game): string {
+  const index = game.players.findIndex((p) => p.id === game.turn);
+  if (index === -1) {
+    throw new Error("Current player not found");
+  }
+  return game.players[(index + 1) % game.players.length].id;
+}
 
+export function lostTurn(game: Game): Game {
+  if (!game.turn) {
+    throw new Error("Not started");
+  }
+  const stack = chipStack(game.chips, game.turn);
+  let { chips } = game;
+  if (stack.length === 0) {
+    const largestAvailableChip = [...game.chips]
+      .reverse()
+      .find(
+        (chip) =>
+          typeof chip.playerId === "undefined" &&
+          typeof chip.disabled === "undefined"
+      );
+    if (typeof largestAvailableChip === "undefined") {
+      // @todo game completed
+    } else {
+      const index = game.chips.indexOf(largestAvailableChip);
+      chips = [
+        ...game.chips.slice(0, index),
+        { value: largestAvailableChip.value, disabled: true },
+        ...game.chips.slice(index + 1),
+      ];
+    }
+  } else {
+    // Lose top chip
+    const topChip = stack[stack.length - 1];
+    const index = game.chips.indexOf(topChip);
+    chips = [
+      ...game.chips.slice(0, index),
+      { value: topChip.value },
+      ...game.chips.slice(index + 1),
+    ];
+  }
+  return {
+    ...game,
+    phase: "BEGIN",
+    turn: nextPlayerId(game),
+    chips,
+  };
+}
 export function throwDiceInGame(game: Game): Game {
   if (game.phase === "THROWN") {
     throw new Error("Must select dice, before throwing again");
@@ -92,14 +150,11 @@ export function throwDiceInGame(game: Game): Game {
     }
   }
   if (bankableDiceValues(dices).length === 0) {
-    // No moves left? next player
-    // @todo Lose chip
-    return {
+    // No moves left?
+    return lostTurn({
       ...game,
-      // turn: nextPlayerId(game),
-      phase: "BEGIN",
       dices,
-    };
+    });
   }
   return {
     ...game,
@@ -108,6 +163,10 @@ export function throwDiceInGame(game: Game): Game {
   };
 }
 export function bankValueInGame(game: Game, value: number): Game {
+  if (!game.turn) {
+    throw new Error("Not started");
+  }
+  const playerId = game.turn;
   if (game.phase !== "THROWN") {
     throw new Error("Must throw dice, before banking");
   }
@@ -119,10 +178,48 @@ export function bankValueInGame(game: Game, value: number): Game {
     ...dice,
     banked: dice.value === value ? true : dice.banked,
   }));
-  // @todo If no dices left and score not enough? lose chip & next player
+  if (
+    bankedDice(dices).length === game.dices.length ||
+    bankableDiceValues(game.dices).length === 0
+  ) {
+    const score = diceScoreTotal(dices);
+    const chipAvailable = game.chips.some((_, index) =>
+      chipStealable(game.chips, playerId, score, index)
+    );
+    if (chipAvailable === false) {
+      return lostTurn({ ...game, dices });
+    }
+  }
   return {
     ...game,
     phase: "BANKED",
     dices,
+  };
+}
+
+export function stealChip(game: Game, chipIndex: number): Game {
+  if (!game.turn) {
+    throw new Error("Not started");
+  }
+  if (game.phase !== "BANKED") {
+    throw new Error("Must throw dice");
+  }
+  const score = diceScoreTotal(game.dices);
+  const err = chipStealError(game.chips, game.turn, score, chipIndex);
+  if (err !== null) {
+    throw err;
+  }
+  const chip = game.chips[chipIndex];
+  const stack = chipStack(game.chips, game.turn);
+  const chips: Chip[] = [
+    ...game.chips.slice(0, chipIndex),
+    { value: chip.value, playerId: game.turn, stackIndex: stack.length },
+    ...game.chips.slice(chipIndex + 1),
+  ];
+  return {
+    ...game,
+    chips,
+    phase: "BEGIN",
+    turn: nextPlayerId(game),
   };
 }

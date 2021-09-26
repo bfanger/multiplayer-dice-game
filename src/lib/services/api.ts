@@ -12,6 +12,7 @@ type PostResponse = {
   "games/[id]/start.json": null;
   "games/[id]/throw.json": null;
   "games/[id]/bank.json": null;
+  "games/[id]/steal.json": null;
 };
 
 function buildUrl(path: string, params: Record<string, string>) {
