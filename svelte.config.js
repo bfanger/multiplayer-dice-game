@@ -2,7 +2,7 @@
 import preprocess from "svelte-preprocess";
 import adapter from "@sveltejs/adapter-node";
 import { Server } from "socket.io";
-import { multiplayer } from "./dist/multiplayer.cjs";
+import multiplayer from "./dist/multiplayer.js";
 
 /** @type {import('@sveltejs/kit').Config} */
 export default {

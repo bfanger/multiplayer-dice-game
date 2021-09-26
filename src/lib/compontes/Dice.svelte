@@ -10,6 +10,7 @@
   class:even={value % 2 === 0}
   class:odd={value % 2 === 1}
   {disabled}
+  on:click
 >
   {#each dots as _}
     <span class="dot" />

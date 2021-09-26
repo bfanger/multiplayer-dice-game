@@ -31,7 +31,7 @@ export async function publishGame(game: Game): Promise<void> {
 /**
  * Multiplayer Server
  */
-export function multiplayer(io: Server): void {
+export default function multiplayer(io: Server): void {
   storage.subscribe(
     "games/*",
     (game: Game) => {

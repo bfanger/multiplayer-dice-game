@@ -1,6 +1,5 @@
 export type Game = {
   id: string;
-  hostPlayerId: string;
   turn?: string; // playerId
   phase: "BEGIN" | "THROWN" | "BANKED";
   players: Player[];

@@ -7,7 +7,7 @@
     "dev:multiplayer": "yarn build:multiplayer --watch",
     "dev:sveltekit": "svelte-kit dev",
     "build": "yarn build:multiplayer && svelte-kit build",
-    "build:multiplayer": "esbuild  src/lib/server/multiplayer.ts --bundle --platform=node --external:redis --external:uuid --external:gravatar --external:jwt-decode --outfile=dist/multiplayer.cjs",
+    "build:multiplayer": "esbuild src/lib/server/multiplayer.ts --bundle --outfile=dist/multiplayer.js --platform=node --format=esm --external:redis --external:uuid --external:gravatar --external:jwt-decode --external:lodash-es",
     "preview": "svelte-kit preview",
     "start": "node ./server.js",
     "lint": "prettier --check --loglevel=warn 'src/**/*.svelte' && tsc --noEmit && svelte-check --fail-on-warnings --fail-on-hints && eslint --ext=js,ts --max-warnings=0 src",

@@ -41,9 +41,13 @@
     <ul>
       {#each games as game (game.id)}
         <li>
-          {game.host}: {game.playerCount}
-          {#if game.started}(nieuw){/if}
           <a href="/games/{game.id}">Meedoen</a>
+          {#if game.started === false}(nieuw){/if}
+          {game.players.length} speler(s):
+
+          {#each game.players as player, index}
+            {player.name}{#if index + 1 !== game.players.length}, {/if}
+          {/each}
         </li>
       {:else}
         <p>Geen spellen actief</p>

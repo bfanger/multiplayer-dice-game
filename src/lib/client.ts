@@ -39,11 +39,18 @@ const client = {
     return response.id;
   },
 
-  async startGame(id: string): Promise<void> {
-    await api.post(`games/[id]/start.json`, "", { params: { id } });
+  async startGame(gameId: string): Promise<void> {
+    await api.post(`games/[id]/start.json`, "", { params: { id: gameId } });
   },
-  async throwDice(id: string): Promise<void> {
-    await api.post(`games/[id]/throw.json`, "", { params: { id } });
+  async throwDice(gameId: string): Promise<void> {
+    await api.post(`games/[id]/throw.json`, "", { params: { id: gameId } });
+  },
+  async bankValue(gameId: string, value: number): Promise<void> {
+    await api.post(
+      `games/[id]/bank.json`,
+      { value },
+      { params: { id: gameId } }
+    );
   },
   async gameState(id: string): Promise<Readable<Game>> {
     const io = await injectSocketIO();
