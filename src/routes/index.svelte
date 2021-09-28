@@ -28,6 +28,10 @@
     await auth.login();
     player = await client.me();
   }
+  async function onJoin(id: string) {
+    await client.joinGame(id);
+    goto(`/games/${id}`);
+  }
 </script>
 
 {#if player}
@@ -41,7 +45,7 @@
     <ul>
       {#each games as game (game.id)}
         <li>
-          <a href="/games/{game.id}">Meedoen</a>
+          <button on:click={() => onJoin(game.id)}>Meedoen</button>
           {#if game.started === false}(nieuw){/if}
           {game.players.length} speler(s):
 
@@ -61,9 +65,3 @@
 {/if}
 
 <slot />
-
-<style>
-  a {
-    color: lawngreen;
-  }
-</style>

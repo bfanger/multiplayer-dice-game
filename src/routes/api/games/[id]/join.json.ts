@@ -8,7 +8,7 @@ import {
   playerForRequest,
 } from "$lib/server/server-fns";
 
-export async function get(request: Request): Promise<EndpointOutput<string>> {
+export async function post(request: Request): Promise<EndpointOutput<string>> {
   const player = playerForRequest(request);
   const game = await gameForRequest(request);
   publishGame(joinGame(game, player));

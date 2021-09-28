@@ -10,6 +10,7 @@ type GetResponse = {
 type PostResponse = {
   "games.json": { id: string };
   "games/[id]/start.json": null;
+  "games/[id]/join.json": null;
   "games/[id]/throw.json": null;
   "games/[id]/bank.json": null;
   "games/[id]/steal.json": null;

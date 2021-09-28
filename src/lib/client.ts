@@ -42,6 +42,9 @@ const client = {
   async startGame(gameId: string): Promise<void> {
     await api.post(`games/[id]/start.json`, "", { params: { id: gameId } });
   },
+  async joinGame(gameId: string): Promise<void> {
+    await api.post(`games/[id]/join.json`, "", { params: { id: gameId } });
+  },
   async throwDice(gameId: string): Promise<void> {
     await api.post(`games/[id]/throw.json`, "", { params: { id: gameId } });
   },
