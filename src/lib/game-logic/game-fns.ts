@@ -12,12 +12,13 @@ import {
   createChip,
   chipStealError,
   chipStealable,
+  allChipsTaken,
 } from "./chip-fns";
 
 export function createGame(): Game {
   return {
     id: uuid(),
-    phase: "BEGIN",
+    phase: "NEW-TURN",
     players: [],
     dices: Array(8)
       .fill(null)
@@ -43,7 +44,7 @@ export function startGame(game: Game): Game {
   }
   return {
     ...game,
-    phase: "BEGIN",
+    phase: "NEW-TURN",
     players,
     turn: players[0].id,
   };
@@ -94,25 +95,7 @@ export function lostTurn(game: Game): Game {
   }
   const stack = chipStack(game.chips, game.turn);
   let { chips } = game;
-  if (stack.length === 0) {
-    const largestAvailableChip = [...game.chips]
-      .reverse()
-      .find(
-        (chip) =>
-          typeof chip.playerId === "undefined" &&
-          typeof chip.disabled === "undefined"
-      );
-    if (typeof largestAvailableChip === "undefined") {
-      // @todo game completed
-    } else {
-      const index = game.chips.indexOf(largestAvailableChip);
-      chips = [
-        ...game.chips.slice(0, index),
-        { value: largestAvailableChip.value, disabled: true },
-        ...game.chips.slice(index + 1),
-      ];
-    }
-  } else {
+  if (stack.length > 0) {
     // Lose top chip
     const topChip = stack[stack.length - 1];
     const index = game.chips.indexOf(topChip);
@@ -122,19 +105,41 @@ export function lostTurn(game: Game): Game {
       ...game.chips.slice(index + 1),
     ];
   }
+  const largestAvailableChip = [...chips]
+    .reverse()
+    .find(
+      (chip) =>
+        typeof chip.playerId === "undefined" &&
+        typeof chip.disabled === "undefined"
+    );
+  if (typeof largestAvailableChip === "undefined") {
+    throw new Error("No chips left");
+  } else {
+    const index = chips.indexOf(largestAvailableChip);
+    chips = [
+      ...chips.slice(0, index),
+      { value: largestAvailableChip.value, disabled: true },
+      ...chips.slice(index + 1),
+    ];
+  }
+
   return {
     ...game,
-    phase: "BEGIN",
+    phase: allChipsTaken(chips) ? "GAME-OVER" : "NEW-TURN",
     turn: nextPlayerId(game),
     chips,
   };
 }
+
 export function throwDiceInGame(game: Game): Game {
   if (game.phase === "THROWN") {
     throw new Error("Must select dice, before throwing again");
   }
+  if (game.phase === "GAME-OVER") {
+    throw new Error("Game over");
+  }
   let dices: Dice[];
-  if (game.phase === "BEGIN") {
+  if (game.phase === "NEW-TURN") {
     dices = game.dices.map(() => rollDice());
   } else {
     let rolled = false;
@@ -219,7 +224,7 @@ export function stealChip(game: Game, chipIndex: number): Game {
   return {
     ...game,
     chips,
-    phase: "BEGIN",
+    phase: allChipsTaken(chips) ? "GAME-OVER" : "NEW-TURN",
     turn: nextPlayerId(game),
   };
 }

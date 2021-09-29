@@ -2,7 +2,9 @@
 import preprocess from "svelte-preprocess";
 import adapter from "@sveltejs/adapter-node";
 import { Server } from "socket.io";
-import multiplayer from "./dist/multiplayer.js";
+import { config } from "dotenv";
+
+config();
 
 /** @type {import('@sveltejs/kit').Config} */
 export default {
@@ -15,9 +17,10 @@ export default {
       plugins: [
         {
           name: "multiplayer",
-          // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
           configureServer(server) {
-            multiplayer(new Server(server.httpServer));
+            import("./dist/multiplayer.js").then(({ default: multiplayer }) => {
+              multiplayer(new Server(server.httpServer));
+            });
           },
         },
       ],

@@ -1,4 +1,4 @@
-import { orderBy } from "lodash-es";
+import { orderBy, sum } from "lodash-es";
 import type { Chip } from "./types";
 
 export function createChip(nr: number): Chip {
@@ -64,4 +64,14 @@ export function chipStealable(
   chipIndex: number
 ): boolean {
   return chipStealError(chips, playerId, score, chipIndex) === null;
+}
+
+export function allChipsTaken(chips: Chip[]): boolean {
+  return chips.every(
+    (chip) => typeof chip.playerId !== "undefined" || chip.disabled
+  );
+}
+
+export function totalPoints(chips: Chip[]): number {
+  return sum(chips.map(chipPoints));
 }

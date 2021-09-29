@@ -12,8 +12,10 @@ export type GameListing = {
 };
 export async function get(): Promise<EndpointOutput<GameListing[]>> {
   const games = await allGames();
-  const active = games.filter((game) =>
-    game.players.some((player) => player.connected)
+  const active = games.filter(
+    (game) =>
+      game.phase !== "GAME-OVER" &&
+      game.players.some((player) => player.connected)
   );
   return {
     body: active.map((game) => ({

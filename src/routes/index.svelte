@@ -34,8 +34,18 @@
   }
 </script>
 
+<svelte:head>
+  <title>Samen dobbelen</title>
+</svelte:head>
+
 {#if player}
-  <img src={player.avatar} alt="" />
+  <a
+    href="https://gravatar.com"
+    target="_blank"
+    title="Upload your avatar to Gravatar.com"
+  >
+    <img src={player.avatar} alt="Avatar" />
+  </a>
   <h2>{player.name}</h2>
   <button on:click={onCreate}>Start een nieuw spel</button>
   {#await api.get("games.json")}
