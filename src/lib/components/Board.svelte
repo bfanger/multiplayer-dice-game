@@ -28,6 +28,9 @@
   import Chip from "./Chip.svelte";
   import Dice from "./Dice.svelte";
   import Player from "./Player.svelte";
+  import GameEvents from "./GameEvents.svelte";
+  import Toast, { ShowToastFn } from "./Toast.svelte";
+  import { playerById } from "$lib/game-logic/player-fns";
 
   export let game: Game;
   export let me: PlayerType | undefined = undefined;
@@ -42,6 +45,7 @@
     "desc"
   );
   $: title = getTitle(game);
+  let showToast: ShowToastFn;
 
   const [receive, send] = crossfade({ fallback: (node) => fade(node) });
   onMount(async () => {
@@ -89,6 +93,17 @@
     }
     return bankableDiceValues(game.dices).includes(dice.value) === false;
   }
+  function onTurn(playerId: string) {
+    if (playerId === me?.id) {
+      showToast("Je bent aan de beurt", 3.5);
+    }
+  }
+  function onBust(playerId: string) {
+    showToast(
+      "Helaas, geen punten voor " + playerById(game.players, playerId).name,
+      2.5
+    );
+  }
 </script>
 
 <svelte:head>
@@ -111,13 +126,15 @@
   </div>
   <div class="players">
     {#each game.players as player (player.id)}
-      <Player
-        name={player.name}
-        avatar={player.avatar}
-        active={player.id === game.turn}
-        disabled={!player.connected}
-        chips={chipStack(game.chips, player.id)}
-      />
+      <span animate:flip>
+        <Player
+          name={player.name}
+          avatar={player.avatar}
+          active={player.id === game.turn}
+          disabled={!player.connected}
+          chips={chipStack(game.chips, player.id)}
+        />
+      </span>
     {/each}
   </div>
   {#if game.phase === "GAME-OVER"}
@@ -179,11 +196,20 @@
           >Gooi dobbelstenen
         </button>
       {:else}
-        Select chip
+        Selecteer een chip
       {/if}
     {/if}
   {/if}
 </main>
+<div class="toasts">
+  <Toast bind:showToast />
+</div>
+
+<GameEvents
+  {game}
+  on:bust={(e) => onBust(e.detail)}
+  on:turn={(e) => onTurn(e.detail)}
+/>
 
 <style lang="scss">
   .rows {
@@ -231,5 +257,14 @@
   .highscore {
     font-size: 2.8rem;
     padding-left: 2rem;
+  }
+  .toasts {
+    position: fixed;
+    top: 1.2rem;
+    right: 2.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1rem;
   }
 </style>

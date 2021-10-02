@@ -122,11 +122,11 @@ export function lostTurn(game: Game): Game {
       ...chips.slice(index + 1),
     ];
   }
-
+  const gameOver = allChipsTaken(chips);
   return {
     ...game,
-    phase: allChipsTaken(chips) ? "GAME-OVER" : "NEW-TURN",
-    turn: nextPlayerId(game),
+    phase: gameOver ? "GAME-OVER" : "NEW-TURN",
+    turn: gameOver ? undefined : nextPlayerId(game),
     chips,
   };
 }
@@ -227,4 +227,54 @@ export function stealChip(game: Game, chipIndex: number): Game {
     phase: allChipsTaken(chips) ? "GAME-OVER" : "NEW-TURN",
     turn: nextPlayerId(game),
   };
+}
+
+type GameEventBase = {
+  type: "start" | "gameover";
+};
+type GameEventWithPlayer = {
+  type: "turn" | "bust";
+  playerId: string;
+};
+export type GameEvent = GameEventBase | GameEventWithPlayer;
+/**
+ * Based on 2 game states, calculate which event happend.
+ */
+export function gameEvents(next: Game, previous: Game): GameEvent[] {
+  if (typeof previous.turn === "undefined" && next.turn) {
+    return [{ type: "start" }, { type: "turn", playerId: next.turn }];
+  }
+  if (next.phase === previous.phase) {
+    return []; // @todo emit detect player updates?
+  }
+
+  if (next.phase === "NEW-TURN" || next.phase === "GAME-OVER") {
+    if (typeof previous.turn === "undefined") {
+      throw new Error("Unexpected event, non player action?");
+    }
+    let followup: GameEvent = { type: "gameover" };
+    if (next.phase !== "GAME-OVER") {
+      if (typeof next.turn === "undefined") {
+        throw new Error("Unexpected event, no player assigned?");
+      }
+      followup = {
+        type: "turn",
+        playerId: next.turn,
+      };
+    }
+    // does'nt work in single player
+    const chipsThen = chipStack(previous.chips, previous.turn).length;
+    const chipsNow = chipStack(next.chips, previous.turn).length;
+    if (chipsNow === 0 || chipsThen > chipsNow) {
+      return [
+        {
+          type: "bust",
+          playerId: previous.turn,
+        },
+        followup,
+      ];
+    }
+    return [followup];
+  }
+  return [];
 }

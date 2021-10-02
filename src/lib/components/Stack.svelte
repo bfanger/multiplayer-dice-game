@@ -15,7 +15,7 @@
   {/if}
   {#if stacked.length > 0}
     <div class="nested">
-      <svelte:self chips={stacked} nested />
+      <svelte:self chips={stacked} />
     </div>
   {/if}
 </div>

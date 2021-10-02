@@ -33,3 +33,11 @@ export function playerOffline(player: Player): Player {
     connected: undefined,
   };
 }
+
+export function playerById(players: Player[], id: string): Player {
+  const player = players.find((entry) => entry.id === id);
+  if (!player) {
+    throw new Error(`Player ${id} not found`);
+  }
+  return player;
+}
