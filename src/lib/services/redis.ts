@@ -19,7 +19,10 @@ let errorOnce = true;
 async function autoConnect(): Promise<void> {
   if (!connectPromise) {
     errorOnce = true;
-    connectPromise = client.connect();
+    connectPromise = new Promise((resolve, reject) => {
+      client.once("error", (err) => reject(new Error(`Redis: ${err.message}`)));
+      client.connect().then(resolve, reject);
+    });
   }
   await connectPromise;
 }
@@ -36,12 +39,9 @@ client.on("disconnect", () => {
   connectPromise = undefined;
   log("Redis down");
 });
-async function get<T extends unknown>(key: string): Promise<T | undefined>;
-async function get<T extends unknown>(key: string, fallback: T): Promise<T>;
-async function get<T extends unknown>(
-  key: string,
-  fallback?: T
-): Promise<T | undefined> {
+async function get<T>(key: string): Promise<T | undefined>;
+async function get<T>(key: string, fallback: T): Promise<T>;
+async function get<T>(key: string, fallback?: T): Promise<T | undefined> {
   await autoConnect();
   const value = await client.get(key);
   if (value === null) {
