@@ -73,5 +73,3 @@
 {:else}
   <button on:click={onLogin}>Login</button>
 {/if}
-
-<slot />

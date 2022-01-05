@@ -1,1 +1,1 @@
-<slot />
+<!-- route for auth -->

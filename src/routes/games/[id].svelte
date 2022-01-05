@@ -5,10 +5,10 @@
   import api from "$lib/services/api";
   import client from "$lib/client";
 
-  export const load: Load = async ({ page, fetch }) => {
+  export const load: Load = async ({ params, fetch }) => {
     const player = await client.me(fetch).catch(() => undefined);
     const $game = await api.get("games/[id].json", {
-      params: { id: page.params.id },
+      params: { id: params.id },
       fetch,
     });
     return {
@@ -40,4 +40,3 @@
 </script>
 
 <Board game={$game} me={player} />
-<slot />
