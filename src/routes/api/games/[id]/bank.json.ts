@@ -1,18 +1,17 @@
-/* eslint-disable import/prefer-default-export */
-import type { EndpointOutput, Request } from "@sveltejs/kit";
+import type { RequestHandler } from "@sveltejs/kit";
 import { publishGame } from "$lib/server/multiplayer";
 import { bankValueInGame } from "$lib/game-logic/game-fns";
-import { emptyResponse, myTurnForRequest } from "$lib/server/server-fns";
+import { emptyResponse, myTurnForRequestEvent } from "$lib/server/server-fns";
 
-export async function post(request: Request): Promise<EndpointOutput<any>> {
-  const { value } = request.body as any;
+export const post: RequestHandler = async (e) => {
+  const { value } = await e.request.json();
   if (typeof value !== "number") {
     return {
       status: 400,
       body: { error: "Missing required value" },
     };
   }
-  const game = await myTurnForRequest(request);
+  const game = await myTurnForRequestEvent(e);
   publishGame(bankValueInGame(game, value));
   return emptyResponse();
-}
+};

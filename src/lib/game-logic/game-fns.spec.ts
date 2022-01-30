@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { bankedDice, thrownDice } from "./dice-fns";
 import { createGame, joinGame, startGame, throwDiceInGame } from "./game-fns";
 import { fakePlayer } from "./player-fns";

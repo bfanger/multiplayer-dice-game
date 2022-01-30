@@ -1,16 +1,15 @@
-/* eslint-disable import/prefer-default-export */
-import type { EndpointOutput, Request } from "@sveltejs/kit";
+import type { RequestHandler } from "@sveltejs/kit";
 import { joinGame } from "$lib/game-logic/game-fns";
 import { publishGame } from "$lib/server/multiplayer";
 import {
   emptyResponse,
-  gameForRequest,
-  playerForRequest,
+  gameForRequestEvent,
+  playerForRequestEvent,
 } from "$lib/server/server-fns";
 
-export async function post(request: Request): Promise<EndpointOutput<string>> {
-  const player = playerForRequest(request);
-  const game = await gameForRequest(request);
+export const post: RequestHandler = async (e) => {
+  const player = playerForRequestEvent(e);
+  const game = await gameForRequestEvent(e);
   publishGame(joinGame(game, player));
   return emptyResponse();
-}
+};

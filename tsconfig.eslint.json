@@ -3,9 +3,9 @@
   "include": [
     "src/**/*.d.ts",
     "src/**/*.js",
-    "src/**/*.ts",
     "src/**/*.svelte",
     // Additional extensions for eslint
+    "**/*.ts",
     "**/*.cjs",
     ".*.cjs",
     "**/*.js"

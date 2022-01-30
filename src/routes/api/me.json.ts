@@ -1,13 +1,9 @@
-/* eslint-disable import/prefer-default-export */
-import type { EndpointOutput, Request } from "@sveltejs/kit";
-import { playerFromToken } from "$lib/game-logic/player-fns";
+import type { RequestHandler } from "@sveltejs/kit";
+import { playerForRequestEvent } from "$lib/server/server-fns";
 
-export function get(req: Request): EndpointOutput<{ id: string }> {
-  if (!req.headers.authorization) {
-    throw new Error("Missing Authorization header");
-  }
-  const jwt = req.headers.authorization.replace(/^Bearer /i, "");
+export const get: RequestHandler = (e) => {
+  const player = playerForRequestEvent(e);
   return {
-    body: playerFromToken(jwt),
+    body: player,
   };
-}
+};

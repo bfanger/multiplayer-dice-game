@@ -15,8 +15,9 @@
     "lint:tsc": "tsc --noEmit",
     "lint:eslint": "eslint --ext=js,ts --max-warnings=0 src",
     "format": "prettier --write src && eslint --ext=js,ts --fix src",
-    "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test": "vitest --passWithNoTests run",
+    "test:watch": "npm run test -- --watch"
   },
   "lint-staged": {
     "*.ts": [
@@ -32,14 +33,11 @@
     ]
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.15.6",
-    "@babel/preset-typescript": "^7.15.0",
-    "@sveltejs/adapter-node": "^1.0.0-next.51",
-    "@sveltejs/kit": "^1.0.0-next.174",
+    "@sveltejs/adapter-node": "next",
+    "@sveltejs/kit": "next",
     "@types/express": "^4.17.13",
     "@types/gravatar": "^1.8.3",
     "@types/http-proxy-middleware": "^1.0.0",
-    "@types/jest": "^27.0.2",
     "@types/lodash-es": "^4.17.5",
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
@@ -56,20 +54,21 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-svelte3": "^3.2.1",
     "husky": "^7.0.0",
-    "jest": "^27.2.1",
     "lint-staged": "^12.1.5",
     "prettier": "^2.4.0",
     "prettier-plugin-svelte": "^2.4.0",
     "sass": "^1.42.0",
     "svelte-check": "^2.2.3",
     "svelte-preprocess": "^4.9.5",
-    "tslib": "^2.3.1",
     "typescript": "^4.4.2",
-    "vite": "^2.5.5"
+    "vite": "^2.5.5",
+    "@testing-library/svelte": "^3.0.3",
+    "jsdom": "^19.0.0",
+    "vitest": "^0.1.17"
   },
   "dependencies": {
     "@azure/msal-browser": "^2.17.0",
-    "dotenv": "^10.0.0",
+    "dotenv": "^14.3.2",
     "express": "^4.17.1",
     "gravatar": "^1.8.2",
     "http-proxy-middleware": "^2.0.1",
