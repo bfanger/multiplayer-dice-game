@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
   import type { Game, Player } from "$lib/game-logic/types";
   import type { Load } from "@sveltejs/kit";
-  import { derived, readable, Readable } from "svelte/store";
+  import { derived, readable, type Readable } from "svelte/store";
   import api from "$lib/services/api";
   import client from "$lib/client";
 

@@ -1,18 +1,8 @@
 import { createClient } from "redis";
 import log from "$lib/log";
+import env from "$lib/env";
 
-function urlFromEnv() {
-  if (process.env.REDIS_URL) {
-    return process.env.REDIS_URL;
-  }
-  try {
-    return import.meta.env.REDIS_URL;
-  } catch (err) {
-    return undefined;
-  }
-}
-
-const client = createClient({ url: urlFromEnv() as string });
+const client = createClient({ url: env.REDIS_URL as string });
 
 let connectPromise: Promise<void> | undefined;
 let errorOnce = true;
@@ -84,7 +74,7 @@ function subscribe<T>(
     }
     error(err);
   }
-  const subscriber = createClient({ url: urlFromEnv() as string });
+  const subscriber = createClient({ url: env.REDIS_URL as string });
   subscriber
     .connect()
     .then(() => {

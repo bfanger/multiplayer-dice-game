@@ -10,14 +10,13 @@ config();
 export default {
   preprocess: preprocess(),
   kit: {
-    target: "svelte-app",
     adapter: adapter(),
     vite: {
-      envPrefix: "REDIS_",
       plugins: [
         {
           name: "multiplayer",
           configureServer(server) {
+            // eslint-disable-next-line import/extensions
             import("./dist/multiplayer.js").then(({ default: multiplayer }) => {
               multiplayer(new Server(server.httpServer));
             });

@@ -1,9 +1,10 @@
-import type { EndpointOutput, RequestEvent } from "@sveltejs/kit";
+import type { RequestHandlerOutput } from "@sveltejs/kit";
 import type { Game, Player } from "$lib/game-logic/types";
 import { playerFromToken } from "$lib/game-logic/player-fns";
+import type { RequestEvent } from "@sveltejs/kit/types/internal";
 import { getGameById } from "./multiplayer";
 
-export function emptyResponse(): EndpointOutput<string> {
+export function emptyResponse(): RequestHandlerOutput<string> {
   return {
     headers: { "Content-Type": "application/json" },
     body: "null",

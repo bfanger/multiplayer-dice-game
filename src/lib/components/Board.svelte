@@ -29,7 +29,8 @@
   import Dice from "./Dice.svelte";
   import Player from "./Player.svelte";
   import GameEvents from "./GameEvents.svelte";
-  import Toast, { ShowToastFn } from "./Toast.svelte";
+  import Toast from "./Toast.svelte";
+  import type { ShowToastFn } from "./Toast.svelte";
   import { playerById } from "$lib/game-logic/player-fns";
 
   export let game: Game;
