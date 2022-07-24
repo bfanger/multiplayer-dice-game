@@ -33,6 +33,7 @@
   import type { ShowToastFn } from "./Toast.svelte";
   import { playerById } from "$lib/game-logic/player-fns";
   import Button from "./Button.svelte";
+  import RegisterForm from "./RegisterForm.svelte";
 
   export let game: Game;
   export let me: PlayerType | undefined = undefined;
@@ -105,6 +106,12 @@
       "Helaas, geen punten voor " + playerById(game.players, playerId).name,
       2.5
     );
+  }
+  function onSignup() {
+    location.reload();
+  }
+  async function onJoin() {
+    await client.joinGame(game.id);
   }
 </script>
 
@@ -188,7 +195,19 @@
       {#if me && hasHostAccess(game, me)}
         <Button on:click={() => client.startGame(game.id)}>Start spel</Button>
       {:else}
-        <p>Wacht todat het spel gestart wordt</p>
+        <p class="muted">Wacht todat het spel gestart wordt...</p>
+      {/if}
+    {:else if game.turn !== me?.id}
+      {#if me}
+        {#if game.players.find((p) => p.id === me?.id)}
+          <p class="muted">Wachten op andere spelers</p>
+        {:else}
+          <Button on:click={onJoin}>Meedoen</Button>
+        {/if}
+      {:else}
+        <p class="muted">Toeschouwer modus</p>
+        <h2>Meedoen?</h2>
+        <RegisterForm on:signup={onSignup} />
       {/if}
     {:else if game.turn === me?.id}
       {#if game.phase === "THROWN"}
@@ -268,5 +287,8 @@
     flex-direction: column;
     align-items: flex-end;
     gap: 1rem;
+  }
+  .muted {
+    opacity: 0.5;
   }
 </style>

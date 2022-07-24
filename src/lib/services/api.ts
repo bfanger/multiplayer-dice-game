@@ -8,6 +8,7 @@ type GetResponse = {
   "me.json": Player;
 };
 type PostResponse = {
+  "signup.json": { token: string };
   "games.json": { id: string };
   "games/[id]/start.json": null;
   "games/[id]/join.json": null;

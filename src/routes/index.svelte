@@ -14,10 +14,10 @@
   import { goto } from "$app/navigation";
   import client from "$lib/client";
   import Spinner from "$lib/components/Spinner.svelte";
-  import auth from "$lib/services/auth";
   import type { Player } from "$lib/game-logic/types";
   import api from "$lib/services/api";
   import Button from "$lib/components/Button.svelte";
+  import RegisterForm from "$lib/components/RegisterForm.svelte";
 
   export let player: Player | undefined;
 
@@ -25,13 +25,12 @@
     const id = await client.createGame(); // @todo report error
     goto(`/games/${id}`);
   }
-  async function onLogin() {
-    await auth.login();
-    player = await client.me();
-  }
   async function onJoin(id: string) {
     await client.joinGame(id);
     goto(`/games/${id}`);
+  }
+  function onSignup() {
+    location.reload();
   }
 </script>
 
@@ -75,11 +74,11 @@
   {:else if typeof window === "undefined"}
     <Spinner />
   {:else}
-    <Button on:click={onLogin}>Login</Button>
+    <RegisterForm on:signup={onSignup} />
   {/if}
 </div>
 
-<style>
+<style lang="scss">
   .container {
     display: flex;
     flex-direction: column;

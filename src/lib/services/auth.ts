@@ -27,6 +27,10 @@ if (typeof window !== "undefined") {
 
 const auth = {
   async accessToken(): Promise<string> {
+    const token = sessionStorage.getItem("dicegame_token");
+    if (token) {
+      return token;
+    }
     if (authPromise) {
       return authPromise;
     }

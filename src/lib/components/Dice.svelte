@@ -9,6 +9,7 @@
   class="dice"
   class:even={value % 2 === 0}
   class:odd={value % 2 === 1}
+  class:six={value === 6}
   {disabled}
   on:click
 >
@@ -38,6 +39,20 @@
     }
     &:active {
       background-color: #ffff7b;
+    }
+    &.six {
+      .dot {
+        display: none;
+      }
+      &:after {
+        content: "◎";
+        color: red;
+        font-size: 5rem;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
     }
   }
   .dot {
