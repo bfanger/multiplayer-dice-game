@@ -3,7 +3,7 @@ import { publishGame } from "$lib/server/multiplayer";
 import { stealChip } from "$lib/game-logic/game-fns";
 import { emptyResponse, myTurnForRequestEvent } from "$lib/server/server-fns";
 
-export const post: RequestHandler = async (e) => {
+export const POST: RequestHandler = async (e) => {
   const { chipIndex } = await e.request.json();
   if (typeof chipIndex !== "number") {
     return {

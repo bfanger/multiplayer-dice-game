@@ -32,6 +32,7 @@
   import Toast from "./Toast.svelte";
   import type { ShowToastFn } from "./Toast.svelte";
   import { playerById } from "$lib/game-logic/player-fns";
+  import Button from "./Button.svelte";
 
   export let game: Game;
   export let me: PlayerType | undefined = undefined;
@@ -185,7 +186,7 @@
 
     {#if !game.turn}
       {#if me && hasHostAccess(game, me)}
-        <button on:click={() => client.startGame(game.id)}>Start spel</button>
+        <Button on:click={() => client.startGame(game.id)}>Start spel</Button>
       {:else}
         <p>Wacht todat het spel gestart wordt</p>
       {/if}
@@ -193,9 +194,9 @@
       {#if game.phase === "THROWN"}
         Selecteer dobbelstenen
       {:else if game.phase === "NEW-TURN" || thrownDice(game.dices).length > 0}
-        <button on:click={() => client.throwDice(game.id)}
+        <Button on:click={() => client.throwDice(game.id)}
           >Gooi dobbelstenen
-        </button>
+        </Button>
       {:else}
         Selecteer een chip
       {/if}

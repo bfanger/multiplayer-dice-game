@@ -3,7 +3,7 @@ import { publishGame } from "$lib/server/multiplayer";
 import { bankValueInGame } from "$lib/game-logic/game-fns";
 import { emptyResponse, myTurnForRequestEvent } from "$lib/server/server-fns";
 
-export const post: RequestHandler = async (e) => {
+export const POST: RequestHandler = async (e) => {
   const { value } = await e.request.json();
   if (typeof value !== "number") {
     return {

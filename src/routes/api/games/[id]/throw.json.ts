@@ -3,7 +3,7 @@ import { publishGame } from "$lib/server/multiplayer";
 import { throwDiceInGame } from "$lib/game-logic/game-fns";
 import { emptyResponse, myTurnForRequestEvent } from "$lib/server/server-fns";
 
-export const post: RequestHandler = async (e) => {
+export const POST: RequestHandler = async (e) => {
   const game = await myTurnForRequestEvent(e);
   publishGame(throwDiceInGame(game));
   return emptyResponse();

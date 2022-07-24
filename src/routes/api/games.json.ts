@@ -9,7 +9,7 @@ export type GameListing = {
   players: Player[];
   started: boolean;
 };
-export const get: RequestHandler = async () => {
+export const GET: RequestHandler = async () => {
   const games = await allGames();
   const active = games.filter(
     (game) =>
@@ -25,7 +25,7 @@ export const get: RequestHandler = async () => {
   };
 };
 
-export const post: RequestHandler = (e) => {
+export const POST: RequestHandler = (e) => {
   const player = playerForRequestEvent(e);
   const game = joinGame(createGame(), player);
   publishGame(game);

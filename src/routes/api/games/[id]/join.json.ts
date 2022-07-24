@@ -7,7 +7,7 @@ import {
   playerForRequestEvent,
 } from "$lib/server/server-fns";
 
-export const post: RequestHandler = async (e) => {
+export const POST: RequestHandler = async (e) => {
   const player = playerForRequestEvent(e);
   const game = await gameForRequestEvent(e);
   publishGame(joinGame(game, player));

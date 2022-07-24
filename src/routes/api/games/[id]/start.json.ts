@@ -7,7 +7,7 @@ import {
 import { hasHostAccess, startGame } from "$lib/game-logic/game-fns";
 import { publishGame } from "$lib/server/multiplayer";
 
-export const post: RequestHandler = async (e) => {
+export const POST: RequestHandler = async (e) => {
   const player = playerForRequestEvent(e);
   const game = await gameForRequestEvent(e);
   if (hasHostAccess(game, player) === false) {
