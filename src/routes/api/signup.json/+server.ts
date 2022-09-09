@@ -1,4 +1,4 @@
-import type { RequestHandler } from "@sveltejs/kit";
+import { json, type RequestHandler } from "@sveltejs/kit";
 import sign from "jwt-encode";
 import { createHash } from "crypto";
 
@@ -14,7 +14,5 @@ export const POST: RequestHandler = async ({ request }) => {
     unique_name: email || `user_${Date.now()}`,
     name,
   };
-  return {
-    body: { token: sign(data, "signup") },
-  };
+  return json({ token: sign(data, "signup") });
 };

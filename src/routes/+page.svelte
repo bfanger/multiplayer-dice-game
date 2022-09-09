@@ -1,25 +1,14 @@
-<script lang="ts" context="module">
-  import type { Load } from "@sveltejs/kit";
-
-  export const load: Load = async ({ fetch }) => {
-    const player =
-      typeof window === "undefined"
-        ? undefined
-        : await client.me(fetch).catch(() => undefined);
-    return { props: { player } };
-  };
-</script>
-
 <script lang="ts">
   import { goto } from "$app/navigation";
   import client from "$lib/client";
   import Spinner from "$lib/components/Spinner.svelte";
-  import type { Player } from "$lib/game-logic/types";
   import api from "$lib/services/api";
   import Button from "$lib/components/Button.svelte";
   import RegisterForm from "$lib/components/RegisterForm.svelte";
+  import type { PageData } from "./$types";
 
-  export let player: Player | undefined;
+  export let data: PageData;
+  $: player = data.player;
 
   async function onCreate() {
     const id = await client.createGame(); // @todo report error

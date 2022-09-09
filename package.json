@@ -3,11 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "yarn build:multiplayer && concurrently --kill-others npm:dev:*",
+    "dev": "yarn build:multiplayer-d-ts && yarn build:multiplayer && concurrently --kill-others npm:dev:*",
     "dev:multiplayer": "yarn build:multiplayer --watch",
     "dev:sveltekit": "vite dev",
-    "build": "yarn build:multiplayer && vite build",
+    "build": "yarn build:multiplayer-d-ts && yarn build:multiplayer && vite build",
     "build:multiplayer": "esbuild src/lib/server/multiplayer.ts --bundle --tsconfig=tsconfig.esbuild.json --outfile=dist/multiplayer.js --platform=node --format=esm --external:redis --external:uuid --external:gravatar --external:jwt-decode --external:lodash-es",
+    "build:multiplayer-d-ts": "mkdir -p dist; cp src/multiplayer.d.ts dist/",
     "preview": "vite preview",
     "start": "node ./server.js",
     "lint": "concurrently --kill-others-on-fail \"npm:lint:*\"",
@@ -15,7 +16,7 @@
     "lint:tsc": "tsc --noEmit",
     "lint:eslint": "eslint --ext=js,ts --max-warnings=0 src",
     "format": "prettier --write src && eslint --ext=js,ts --fix src",
-    "prepare": "svelte-kit sync && husky install",
+    "prepare": "husky install",
     "test": "vitest --passWithNoTests run",
     "test:watch": "vitest"
   },

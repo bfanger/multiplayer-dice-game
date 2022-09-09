@@ -1,0 +1,10 @@
+/node_modules
+/.git
+/.svelte-kit/
+/build
+/dist
+/.env
+/.husky
+/build/
+/dist/
+/functions/

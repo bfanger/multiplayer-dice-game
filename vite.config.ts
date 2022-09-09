@@ -1,9 +1,7 @@
 import { sveltekit } from "@sveltejs/kit/vite";
 import type { UserConfig } from "vitest/config";
 import { Server } from "socket.io";
-// import { config } from "dotenv";
-
-// config();
+import type { Server as HttpServer } from "http";
 
 const config: UserConfig = {
   plugins: [
@@ -11,9 +9,8 @@ const config: UserConfig = {
     {
       name: "multiplayer",
       configureServer(server) {
-        // eslint-disable-next-line import/extensions
         import("./dist/multiplayer.js").then(({ default: multiplayer }) => {
-          multiplayer(new Server(server.httpServer));
+          multiplayer(new Server(server.httpServer as HttpServer));
         });
       },
     },
@@ -22,11 +19,6 @@ const config: UserConfig = {
     globals: true,
     environment: "happy-dom",
   },
-  // vite: {
-  //   plugins: [
-
-  //   ],
-  // },
 };
 
 export default config;

@@ -1,14 +1,11 @@
-import type { RequestHandlerOutput } from "@sveltejs/kit";
+import { json, type RequestEvent } from "@sveltejs/kit";
 import type { Game, Player } from "$lib/game-logic/types";
 import { playerFromToken } from "$lib/game-logic/player-fns";
-import type { RequestEvent } from "@sveltejs/kit/types/internal";
+
 import { getGameById } from "./multiplayer";
 
-export function emptyResponse(): RequestHandlerOutput<string> {
-  return {
-    headers: { "Content-Type": "application/json" },
-    body: "null",
-  };
+export function emptyResponse(): Response {
+  return json(null);
 }
 export function playerForRequestEvent({ request }: RequestEvent): Player {
   const auth = request.headers.get("authorization");
@@ -19,7 +16,7 @@ export function playerForRequestEvent({ request }: RequestEvent): Player {
   return playerFromToken(jwt);
 }
 export function gameForRequestEvent({ params }: RequestEvent): Promise<Game> {
-  return getGameById(params.id);
+  return getGameById(params.id as string);
 }
 export async function myTurnForRequestEvent(
   request: RequestEvent

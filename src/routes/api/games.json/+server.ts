@@ -1,8 +1,9 @@
-import type { RequestHandler } from "@sveltejs/kit";
+import { json } from "@sveltejs/kit";
 import { createGame, joinGame } from "$lib/game-logic/game-fns";
 import { allGames, publishGame } from "$lib/server/multiplayer";
 import type { Player } from "$lib/game-logic/types";
 import { playerForRequestEvent } from "$lib/server/server-fns";
+import type { RequestHandler } from "./$types";
 
 export type GameListing = {
   id: string;
@@ -16,20 +17,19 @@ export const GET: RequestHandler = async () => {
       game.phase !== "GAME-OVER" &&
       game.players.some((player) => player.connected)
   );
-  return {
-    body: active.map((game) => ({
+
+  return json(
+    active.map((game) => ({
       id: game.id,
       started: game.turn === undefined,
       players: game.players,
-    })),
-  };
+    }))
+  );
 };
 
 export const POST: RequestHandler = (e) => {
   const player = playerForRequestEvent(e);
   const game = joinGame(createGame(), player);
   publishGame(game);
-  return {
-    body: { id: game.id },
-  };
+  return json({ id: game.id });
 };
