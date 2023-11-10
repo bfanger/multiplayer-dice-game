@@ -1,4 +1,4 @@
-import type { GameListing } from "src/routes/api/games.json/+server";
+import type { GameListing } from "../../routes/api/games.json/+server";
 import type { Game, Player } from "../game-logic/types";
 import auth from "./auth";
 

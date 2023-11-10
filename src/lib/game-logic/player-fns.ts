@@ -1,4 +1,4 @@
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import gravatar from "gravatar";
 import type { Player } from "./types";
 
