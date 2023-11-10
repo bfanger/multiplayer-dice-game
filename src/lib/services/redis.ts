@@ -11,7 +11,7 @@ async function autoConnect(): Promise<void> {
     errorOnce = true;
     connectPromise = new Promise((resolve, reject) => {
       client.once("error", (err) => reject(new Error(`Redis: ${err.message}`)));
-      client.connect().then(resolve, reject);
+      client.connect().then(() => resolve(), reject);
     });
   }
   await connectPromise;
@@ -99,10 +99,10 @@ function subscribe<T>(
     .catch(onError);
   return () => unsubscribe();
 }
-const storage = {
+const redis = {
   get,
   set,
   all,
   subscribe,
 };
-export default storage;
+export default redis;

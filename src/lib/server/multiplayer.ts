@@ -1,6 +1,6 @@
 import type { Server } from "socket.io";
 import type { Game, Player } from "$lib/game-logic/types";
-import storage from "$lib/services/redis";
+import redis from "$lib/services/redis";
 import log from "$lib/log";
 import {
   playerFromToken,
@@ -10,14 +10,14 @@ import {
 import { updatePlayer } from "$lib/game-logic/game-fns";
 
 export function allGames(): Promise<Game[]> {
-  return storage.all<Game>("games/*");
+  return redis.all<Game>("games/*");
 }
 
 /**
  * Returns the game and notify function to broadcast the changes to all players
  */
 export async function getGameById(id: string): Promise<Game> {
-  const game = await storage.get<Game>(`games/${id}`);
+  const game = await redis.get<Game>(`games/${id}`);
   if (!game) {
     throw new Error(`Game "${id}"" not found`);
   }
@@ -25,14 +25,14 @@ export async function getGameById(id: string): Promise<Game> {
 }
 const HOUR = 60 * 60;
 export async function publishGame(game: Game): Promise<void> {
-  await storage.set(`games/${game.id}`, game, { ttl: 2 * HOUR });
+  await redis.set(`games/${game.id}`, game, { ttl: 2 * HOUR });
 }
 
 /**
  * Multiplayer Server
  */
 export default function multiplayer(io: Server): void {
-  storage.subscribe(
+  redis.subscribe(
     "games/*",
     (game: Game) => {
       io.to(`games/${game.id}`).emit(`games/${game.id}`, game);
