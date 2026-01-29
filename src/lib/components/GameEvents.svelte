@@ -1,13 +1,17 @@
 <script lang="ts">
   import { gameEvents } from "$lib/game-logic/game-fns";
   import type { Game } from "$lib/game-logic/types";
-  import { createEventDispatcher } from "svelte";
 
-  export let game: Game;
+  type Props = {
+    game: Game;
+    onbust?: (playerId: string) => void;
+    onturn?: (playerId: string) => void;
+  };
 
-  const dispatch = createEventDispatcher();
+  let { game, onbust, onturn }: Props = $props();
 
   let previous: Game | undefined;
+
   function detectEvent(next: Game) {
     if (!previous) {
       previous = next;
@@ -17,12 +21,16 @@
     previous = next;
 
     for (const event of events) {
-      if (event.type === "bust" || event.type === "turn") {
-        dispatch(event.type, event.playerId);
+      if (event.type === "bust") {
+        onbust?.(event.playerId);
+      } else if (event.type === "turn") {
+        onturn?.(event.playerId);
       } else {
-        dispatch(event.type);
+        console.warn("Unknown event type:", event.type);
       }
     }
   }
-  $: detectEvent(game);
+  $effect(() => {
+    detectEvent(game);
+  });
 </script>

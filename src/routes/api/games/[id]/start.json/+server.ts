@@ -13,6 +13,6 @@ export const POST: RequestHandler = async (e) => {
   if (hasHostAccess(game, player) === false) {
     throw new Error("Only the host can start the game");
   }
-  publishGame(startGame(game));
+  void publishGame(startGame(game));
   return emptyResponse();
 };

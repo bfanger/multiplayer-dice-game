@@ -39,12 +39,12 @@ export default function multiplayer(io: Server): void {
     },
     (err) => {
       log.error("storage.subscribe()", err);
-    }
+    },
   );
   io.on("connection", (socket) => {
     let player: Player | undefined;
     if (socket.handshake.auth.token) {
-      player = playerFromToken(socket.handshake.auth.token);
+      player = playerFromToken(socket.handshake.auth.token as string);
       log(`${player.name} online`);
       socket.on("disconnect", () => {
         log(player?.name, "offline");
@@ -62,28 +62,27 @@ export default function multiplayer(io: Server): void {
             throw new Error(`Can't join ${id}, game not found`);
           }
           let leave = (leaveGame: Game, leavePlayer: Player) => {
-            socket.leave(room);
-            publishGame(
-              updatePlayer(leaveGame, playerOffline(leavePlayer))
+            void socket.leave(room);
+            void publishGame(
+              updatePlayer(leaveGame, playerOffline(leavePlayer)),
             ).catch((err) => log.error("publishGame():", err));
             log(leavePlayer.name, "left", id);
-            leave = () => {};
+            leave = () => undefined;
           };
           socket.on("leave", async (leaveId) => {
-            leave(await getGameById(leaveId), player as Player);
+            leave(await getGameById(leaveId as string), player);
           });
           if (!socket.disconnected) {
             publishGame(updatePlayer(game, playerOnline(player))).catch((err) =>
-              log.error("publishGame():", err)
+              log.error("publishGame():", err),
             );
             log(player.name, "joined", id);
             socket.once("disconnect", async () => {
-              leave(await getGameById(id), player as Player);
+              leave(await getGameById(id), player);
             });
           }
         }
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.warn(err);
         socket.disconnect();
       }

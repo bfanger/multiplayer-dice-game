@@ -1,19 +1,19 @@
 <script lang="ts">
+  /* eslint-disable @typescript-eslint/no-unsafe-return */
   import client from "$lib/client";
 
   import Board from "$lib/components/Board.svelte";
   import { onMount } from "svelte";
   import { derived } from "svelte/store";
-  import type { PageData } from "./$types";
 
-  export let data: PageData;
+  let { data } = $props();
 
-  $: player = data.player;
-  $: game = data.game;
+  let player = $derived(data.player);
+  let game = $derived(data.game);
 
   onMount(() => {
-    client.gameState($game.id).then((state) => {
-      game = derived([game, state], ([initial, state]) => {
+    void client.gameState($game.id).then((startState) => {
+      game = derived([game, startState], ([initial, state]) => {
         if (state) {
           return state;
         }

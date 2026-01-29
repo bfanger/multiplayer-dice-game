@@ -1,12 +1,17 @@
 <script lang="ts">
+  import Stack from "./Stack.svelte";
   import { chipPoints } from "$lib/game-logic/chip-fns";
   import type { Chip as ChipType } from "$lib/game-logic/types";
   import Chip from "./Chip.svelte";
 
-  export let chips: ChipType[];
+  type Props = {
+    chips: ChipType[];
+  };
 
-  $: chip = chips[0];
-  $: stacked = chips.slice(1);
+  let { chips }: Props = $props();
+
+  let chip = $derived(chips[0]);
+  let stacked = $derived(chips.slice(1));
 </script>
 
 <div class="stack">
@@ -15,12 +20,12 @@
   {/if}
   {#if stacked.length > 0}
     <div class="nested">
-      <svelte:self chips={stacked} />
+      <Stack chips={stacked} />
     </div>
   {/if}
 </div>
 
-<style lang="scss">
+<style>
   .stack {
     position: relative;
   }

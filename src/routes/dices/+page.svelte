@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Dice from "$lib/components/Dice.svelte";
 </script>
 

@@ -16,10 +16,13 @@ export function playerForRequestEvent({ request }: RequestEvent): Player {
   return playerFromToken(jwt);
 }
 export function gameForRequestEvent({ params }: RequestEvent): Promise<Game> {
-  return getGameById(params.id as string);
+  if (!params.id) {
+    throw new Error("Missing game ID");
+  }
+  return getGameById(params.id);
 }
 export async function myTurnForRequestEvent(
-  request: RequestEvent
+  request: RequestEvent,
 ): Promise<Game> {
   const player = playerForRequestEvent(request);
   const game = await gameForRequestEvent(request);

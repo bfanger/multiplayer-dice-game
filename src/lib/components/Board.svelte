@@ -1,4 +1,5 @@
 <script lang="ts">
+  /* eslint-disable @typescript-eslint/no-unsafe-call */
   import { onMount } from "svelte";
   import { flip } from "svelte/animate";
   import { crossfade, fade } from "svelte/transition";
@@ -35,26 +36,20 @@
   import Button from "./Button.svelte";
   import RegisterForm from "./RegisterForm.svelte";
 
-  export let game: Game;
-  export let me: PlayerType | undefined = undefined;
+  type Props = {
+    game: Game;
+    me?: PlayerType | undefined;
+  };
 
-  $: chips = game.chips.filter((chip) => typeof chip.playerId === "undefined");
-  $: scores = sortBy(
-    game.players.map((player) => ({
-      ...player,
-      score: totalPoints(chipStack(game.chips, player.id)),
-    })),
-    "score",
-    "desc"
-  );
-  $: title = getTitle(game);
-  let showToast: ShowToastFn;
+  let { game, me = $bindable(undefined) }: Props = $props();
+
+  let showToast = $state<ShowToastFn>(() => undefined);
 
   const [receive, send] = crossfade({ fallback: (node) => fade(node) });
   onMount(async () => {
     me = await client.me();
   });
-  function chipDisabled(game: Game, chip: ChipType) {
+  function chipDisabled(chip: ChipType) {
     if (game.phase !== "BANKED") {
       return true;
     }
@@ -69,11 +64,11 @@
         game.chips,
         me.id,
         diceScoreTotal(game.dices),
-        game.chips.indexOf(chip)
+        game.chips.indexOf(chip),
       ) === false
     );
   }
-  function getTitle(game: Game) {
+  function getTitle() {
     if (!game.turn) {
       return "Wachten op spelers...";
     }
@@ -83,11 +78,11 @@
     const player = game.players.find((p) => p.id === game.turn);
     const subtitle = game.phase === "THROWN" ? "kiezen" : "gooien";
     if (player) {
-      return player.name + " moet " + subtitle;
+      return `${player.name} moet ${subtitle}`;
     }
     return subtitle;
   }
-  function diceDisabled(game: Game, dice: DiceType) {
+  function diceDisabled(dice: DiceType) {
     if (game.turn !== me?.id) {
       return true;
     }
@@ -103,8 +98,8 @@
   }
   function onBust(playerId: string) {
     showToast(
-      "Helaas, geen punten voor " + playerById(game.players, playerId).name,
-      2.5
+      `Helaas, geen punten voor ${playerById(game.players, playerId).name}`,
+      2.5,
     );
   }
   function onSignup() {
@@ -113,10 +108,23 @@
   async function onJoin() {
     await client.joinGame(game.id);
   }
+  let chips = $derived(
+    game.chips.filter((chip) => typeof chip.playerId === "undefined"),
+  );
+  let scores = $derived(
+    sortBy(
+      game.players.map((player) => ({
+        ...player,
+        score: totalPoints(chipStack(game.chips, player.id)),
+      })),
+      "score",
+      "desc",
+    ),
+  );
 </script>
 
 <svelte:head>
-  <title>{title}</title>
+  <title>{getTitle()}</title>
 </svelte:head>
 
 <main class="rows">
@@ -127,8 +135,8 @@
           value={chip.value}
           points={chipPoints(chip)}
           flipped={!!chip.disabled}
-          disabled={chipDisabled(game, chip)}
-          on:click={() => client.steal(game.id, game.chips.indexOf(chip))}
+          disabled={chipDisabled(chip)}
+          onclick={() => client.steal(game.id, game.chips.indexOf(chip))}
         />
       </span>
     {/each}
@@ -162,8 +170,8 @@
     <div class="bank">
       {#each bankedDice(game.dices) as dice (game.dices.indexOf(dice))}
         <span
-          in:receive={{ key: "dice" + game.dices.indexOf(dice) }}
-          out:send={{ key: "dice" + game.dices.indexOf(dice) }}
+          in:receive={{ key: `dice${game.dices.indexOf(dice)}` }}
+          out:send={{ key: `dice${game.dices.indexOf(dice)}` }}
           animate:flip={{ duration: 200 }}
         >
           <Dice value={dice.value} />
@@ -179,13 +187,13 @@
       {#each thrownDice(game.dices) as dice (game.dices.indexOf(dice))}
         <span
           animate:flip={{ duration: 200 }}
-          in:receive={{ key: "dice" + game.dices.indexOf(dice) }}
-          out:send={{ key: "dice" + game.dices.indexOf(dice) }}
+          in:receive={{ key: `dice${game.dices.indexOf(dice)}` }}
+          out:send={{ key: `dice${game.dices.indexOf(dice)}` }}
         >
           <Dice
             value={dice.value}
-            disabled={diceDisabled(game, dice)}
-            on:click={() => client.bankValue(game.id, dice.value)}
+            disabled={diceDisabled(dice)}
+            onclick={() => client.bankValue(game.id, dice.value)}
           />
         </span>
       {/each}
@@ -193,7 +201,7 @@
 
     {#if !game.turn}
       {#if me && hasHostAccess(game, me)}
-        <Button on:click={() => client.startGame(game.id)}>Start spel</Button>
+        <Button onclick={() => client.startGame(game.id)}>Start spel</Button>
       {:else}
         <p class="muted">Wacht todat het spel gestart wordt...</p>
       {/if}
@@ -202,18 +210,18 @@
         {#if game.players.find((p) => p.id === me?.id)}
           <p class="muted">Wachten op andere spelers</p>
         {:else}
-          <Button on:click={onJoin}>Meedoen</Button>
+          <Button onclick={onJoin}>Meedoen</Button>
         {/if}
       {:else}
         <p class="muted">Toeschouwer modus</p>
         <h2>Meedoen?</h2>
-        <RegisterForm on:signup={onSignup} />
+        <RegisterForm signup={onSignup} />
       {/if}
     {:else if game.turn === me?.id}
       {#if game.phase === "THROWN"}
         Selecteer dobbelstenen
       {:else if game.phase === "NEW-TURN" || thrownDice(game.dices).length > 0}
-        <Button on:click={() => client.throwDice(game.id)}
+        <Button onclick={() => client.throwDice(game.id)}
           >Gooi dobbelstenen
         </Button>
       {:else}
@@ -226,13 +234,9 @@
   <Toast bind:showToast />
 </div>
 
-<GameEvents
-  {game}
-  on:bust={(e) => onBust(e.detail)}
-  on:turn={(e) => onTurn(e.detail)}
-/>
+<GameEvents {game} onbust={onBust} onturn={onTurn} />
 
-<style lang="scss">
+<style>
   .rows {
     padding: 1.6rem;
     display: flex;

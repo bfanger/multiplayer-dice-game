@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
   export type ShowToastFn = (message: string, ttl?: number) => void;
 </script>
 
@@ -11,7 +11,7 @@
   const toasts = writable<Toast[]>([]);
 
   export const showToast: ShowToastFn = (message: string, ttl = 4) => {
-    const toast: Toast = { message: message };
+    const toast: Toast = { message };
     $toasts = [...$toasts, toast];
     setTimeout(() => {
       $toasts = $toasts.filter((entry) => entry !== toast);

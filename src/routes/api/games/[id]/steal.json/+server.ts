@@ -11,10 +11,10 @@ export const POST: RequestHandler = async (e) => {
       { error: "Missing required value" },
       {
         status: 400,
-      }
+      },
     );
   }
   const game = await myTurnForRequestEvent(e);
-  publishGame(stealChip(game, chipIndex));
+  void publishGame(stealChip(game, chipIndex));
   return emptyResponse();
 };

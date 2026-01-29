@@ -1,4 +1,12 @@
-<slot />
+<script lang="ts">
+  type Props = {
+    children?: import("svelte").Snippet;
+  };
+
+  let { children }: Props = $props();
+</script>
+
+{@render children?.()}
 
 <style>
   :global(html) {
@@ -9,5 +17,8 @@
   }
   :global(body) {
     font-size: 1.4rem;
+  }
+  :global(svelte-app) {
+    display: contents;
   }
 </style>

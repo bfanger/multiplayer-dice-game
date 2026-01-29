@@ -13,7 +13,9 @@ export function fakePlayer(): Player {
 fakePlayer.autoincrement = 0;
 
 export function playerFromToken(jwt: string): Player {
-  const data = jwtDecode(jwt) as any;
+  const data = jwtDecode<{ oid: string; name: string; unique_name: string }>(
+    jwt,
+  );
   return {
     id: data.oid,
     name: data.name,

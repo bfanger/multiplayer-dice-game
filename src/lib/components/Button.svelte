@@ -1,9 +1,15 @@
 <script lang="ts">
+  type Props = {
+    children?: import("svelte").Snippet;
+    onclick?: () => void;
+  };
+
+  let { children, onclick }: Props = $props();
 </script>
 
-<button on:click><slot /></button>
+<button {onclick}>{@render children?.()}</button>
 
-<style lang="scss">
+<style>
   button {
     background: #eaeaea;
     color: #333;

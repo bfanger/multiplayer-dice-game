@@ -15,7 +15,7 @@ export const GET: RequestHandler = async () => {
   const active = games.filter(
     (game) =>
       game.phase !== "GAME-OVER" &&
-      game.players.some((player) => player.connected)
+      game.players.some((player) => player.connected),
   );
 
   return json(
@@ -23,13 +23,13 @@ export const GET: RequestHandler = async () => {
       id: game.id,
       started: game.turn === undefined,
       players: game.players,
-    }))
+    })),
   );
 };
 
 export const POST: RequestHandler = (e) => {
   const player = playerForRequestEvent(e);
   const game = joinGame(createGame(), player);
-  publishGame(game);
+  void publishGame(game);
   return json({ id: game.id });
 };

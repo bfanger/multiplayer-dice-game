@@ -1,17 +1,19 @@
 import { sveltekit } from "@sveltejs/kit/vite";
-import type { UserConfig } from "vitest/config";
+import { defineConfig } from "vitest/config";
 import { Server } from "socket.io";
 import type { Server as HttpServer } from "http";
 
-const config: UserConfig = {
+export default defineConfig({
   plugins: [
     sveltekit(),
     {
       name: "multiplayer",
       configureServer(server) {
-        import("./dist/multiplayer.js").then(({ default: multiplayer }) => {
-          multiplayer(new Server(server.httpServer as HttpServer));
-        });
+        void import("./dist/multiplayer.js").then(
+          ({ default: multiplayer }) => {
+            multiplayer(new Server(server.httpServer as HttpServer));
+          },
+        );
       },
     },
   ],
@@ -19,6 +21,4 @@ const config: UserConfig = {
     globals: true,
     environment: "happy-dom",
   },
-};
-
-export default config;
+});

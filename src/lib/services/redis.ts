@@ -2,7 +2,7 @@ import { createClient } from "redis";
 import log from "$lib/log";
 import env from "$lib/env";
 
-const client = createClient({ url: env.REDIS_URL as string });
+const client = createClient({ url: env.REDIS_URL! });
 
 let connectPromise: Promise<void> | undefined;
 let errorOnce = true;
@@ -37,18 +37,18 @@ async function get<T>(key: string, fallback?: T): Promise<T | undefined> {
   if (value === null) {
     return fallback;
   }
-  return JSON.parse(value);
+  return JSON.parse(value) as T;
 }
 async function set(
   key: string,
   value: unknown,
-  options?: { ttl: number } // TTL in seconds
+  options?: { ttl: number }, // TTL in seconds
 ): Promise<void> {
   const data = JSON.stringify(value);
   const config = options ? { EX: options.ttl } : {};
   await autoConnect();
   await client.set(key, data, config);
-  client.publish(key, data);
+  void client.publish(key, data);
 }
 async function all<T>(query: string): Promise<T[]> {
   await autoConnect();
@@ -59,10 +59,10 @@ async function all<T>(query: string): Promise<T[]> {
 function subscribe<T>(
   channel: string,
   next: (value: T) => void,
-  error?: (err: Error) => void
+  error?: (err: Error) => void,
 ): () => void {
   const wrapped = (data: string) => {
-    next(JSON.parse(data));
+    next(JSON.parse(data) as T);
   };
   let aborted = false;
   let unsubscribe = () => {
@@ -74,8 +74,8 @@ function subscribe<T>(
     }
     error(err);
   }
-  const subscriber = createClient({ url: env.REDIS_URL as string });
-  subscriber
+  const subscriber = createClient({ url: env.REDIS_URL! });
+  void subscriber
     .connect()
     .then(() => {
       if (aborted) {
@@ -85,15 +85,15 @@ function subscribe<T>(
       subscriber.on("error", (err) => {
         if (once) {
           once = false;
-          onError(err);
+          onError(err as Error);
         }
       });
       if (channel.endsWith("*")) {
-        subscriber.pSubscribe(channel, wrapped);
-        unsubscribe = () => subscriber.pUnsubscribe(channel, wrapped);
+        void subscriber.pSubscribe(channel, wrapped);
+        unsubscribe = () => void subscriber.pUnsubscribe(channel, wrapped);
       } else {
-        subscriber.subscribe(channel, wrapped);
-        unsubscribe = () => subscriber.unsubscribe(channel, wrapped);
+        void subscriber.subscribe(channel, wrapped);
+        unsubscribe = () => void subscriber.unsubscribe(channel, wrapped);
       }
     })
     .catch(onError);

@@ -4,13 +4,23 @@
   import type { Chip as ChipType } from "$lib/game-logic/types";
   import Stack from "./Stack.svelte";
 
-  export let name: string;
-  export let avatar: string;
-  export let active = false;
-  export let disabled = false;
-  export let chips: ChipType[] = [];
+  type Props = {
+    name: string;
+    avatar: string;
+    active?: boolean;
+    disabled?: boolean;
+    chips?: ChipType[];
+  };
 
-  $: points = totalPoints(chips);
+  let {
+    name,
+    avatar,
+    active = false,
+    disabled = false,
+    chips = [],
+  }: Props = $props();
+
+  let points = $derived(totalPoints(chips));
 </script>
 
 <div class="player" class:active class:disabled>
@@ -21,7 +31,7 @@
   </div>
 </div>
 
-<style lang="scss">
+<style>
   .player {
     position: relative;
     display: inline-flex;

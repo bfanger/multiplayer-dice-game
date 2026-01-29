@@ -1,16 +1,27 @@
 <script lang="ts">
-  export let value: number;
-  export let points: number;
-  export let flipped = false;
-  export let disabled = false;
+  type Props = {
+    value: number;
+    points: number;
+    flipped?: boolean;
+    disabled?: boolean;
+    onclick?: () => void;
+  };
+
+  let {
+    value,
+    points,
+    flipped = false,
+    disabled = false,
+    onclick,
+  }: Props = $props();
 </script>
 
-<button class="chip" class:flipped {disabled} on:click>
+<button class="chip" class:flipped {disabled} {onclick}>
   <div class="value">{value}</div>
   <div class="points">{points}</div>
 </button>
 
-<style lang="scss">
+<style>
   .chip {
     appearance: none;
     display: inline-flex;

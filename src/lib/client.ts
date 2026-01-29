@@ -1,13 +1,14 @@
 import { readable } from "svelte/store";
 import type { Readable } from "svelte/store";
-import type { Handshake, Socket } from "socket.io/dist/socket";
 import type { Game, Player } from "./game-logic/types";
 import api from "./services/api";
 import type { Fetch } from "./services/api";
 import auth from "./services/auth";
+import type { Socket } from "socket.io";
 
+type Handshake = { auth: { token?: string } };
 let ioPromise: ReturnType<typeof injectSocketIO> | undefined;
-function injectSocketIO(): Promise<(handshake: Partial<Handshake>) => Socket> {
+function injectSocketIO(): Promise<(handshake: Handshake) => Socket> {
   if (typeof window === "undefined") {
     throw new Error("socket.io client is not available in SSR");
   }
@@ -16,7 +17,7 @@ function injectSocketIO(): Promise<(handshake: Partial<Handshake>) => Socket> {
       const s = document.createElement("script");
       s.onload = () => {
         const win = window as any;
-        resolve(win.io);
+        resolve(win.io as Promise<(handshake: Handshake) => Socket>);
       };
       s.onerror = () => reject(new Error("socket.io.js failed"));
       s.onabort = () => reject(new Error("socket.io.js was aborted"));
@@ -52,14 +53,14 @@ const client = {
     await api.post(
       `games/[id]/bank.json`,
       { value },
-      { params: { id: gameId } }
+      { params: { id: gameId } },
     );
   },
   async steal(gameId: string, chipIndex: number): Promise<void> {
     await api.post(
       `games/[id]/steal.json`,
       { chipIndex },
-      { params: { id: gameId } }
+      { params: { id: gameId } },
     );
   },
   async gameState(id: string): Promise<Readable<Game>> {

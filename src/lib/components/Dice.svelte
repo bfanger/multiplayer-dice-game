@@ -1,8 +1,13 @@
 <script lang="ts">
-  export let value: number;
-  export let disabled = false;
+  type Props = {
+    value: number;
+    disabled?: boolean;
+    onclick?: () => void;
+  };
 
-  $: dots = Array(value).fill(null);
+  let { value, disabled = false, onclick }: Props = $props();
+
+  let dots = $derived(Array(value).fill(null));
 </script>
 
 <button
@@ -11,14 +16,14 @@
   class:odd={value % 2 === 1}
   class:six={value === 6}
   {disabled}
-  on:click
+  {onclick}
 >
   {#each dots as _}
-    <span class="dot" />
+    <span class="dot"></span>
   {/each}
 </button>
 
-<style lang="scss">
+<style>
   .dice {
     appearance: none;
     display: inline-block;

@@ -1,18 +1,22 @@
 <script lang="ts">
   import api from "$lib/services/api";
   import auth from "$lib/services/auth";
-  import { createEventDispatcher } from "svelte";
 
-  const dispatch = createEventDispatcher();
+  type Props = {
+    signup: () => void;
+  };
+  let { signup }: Props = $props();
 
   async function onRegister(e: SubmitEvent) {
+    e.preventDefault();
+
     const form = new FormData(e.target as HTMLFormElement);
     const { token } = await api.post("signup.json", {
       name: form.get("name"),
       email: form.get("email"),
     });
     sessionStorage.setItem("dicegame_token", token);
-    dispatch("signup");
+    signup();
   }
 
   async function onLogin() {
@@ -21,7 +25,7 @@
   }
 </script>
 
-<form class="register" on:submit|preventDefault={onRegister}>
+<form class="register" onsubmit={onRegister}>
   <label for="name">Naam</label>
   <input id="name" name="name" type="text" required />
   <label for="email">E-mailadres</label>
@@ -33,9 +37,9 @@
   />
   <input type="submit" value="Aanmelden" />
 </form>
-<button class="link" on:click={onLogin}>Ik ben Triple medewerker</button>
+<button class="link" onclick={onLogin}>Ik ben Triple medewerker</button>
 
-<style lang="scss">
+<style>
   .register {
     display: grid;
     gap: 0.4rem;

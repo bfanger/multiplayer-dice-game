@@ -5,6 +5,6 @@ import { emptyResponse, myTurnForRequestEvent } from "$lib/server/server-fns";
 
 export const POST: RequestHandler = async (e) => {
   const game = await myTurnForRequestEvent(e);
-  publishGame(throwDiceInGame(game));
+  void publishGame(throwDiceInGame(game));
   return emptyResponse();
 };

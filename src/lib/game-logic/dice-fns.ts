@@ -32,7 +32,7 @@ export function diceScoreTotal(dices: Dice[]): number {
 export function bankedDice(dices: Dice[]): Dice[] {
   return orderBy(
     dices.filter((dice) => dice.banked),
-    "value"
+    "value",
   );
 }
 export function thrownDice(dices: Dice[]): Dice[] {
@@ -47,5 +47,5 @@ export function bankedDiceValues(dices: Dice[]): number[] {
 
 export function bankableDiceValues(dices: Dice[]): number[] {
   const taken = bankedDiceValues(dices);
-  return uniq(diceValues(dices).filter((value) => taken.indexOf(value) === -1));
+  return uniq(diceValues(dices).filter((value) => !taken.includes(value)));
 }

@@ -10,6 +10,6 @@ import {
 export const POST: RequestHandler = async (e) => {
   const player = playerForRequestEvent(e);
   const game = await gameForRequestEvent(e);
-  publishGame(joinGame(game, player));
+  void publishGame(joinGame(game, player));
   return emptyResponse();
 };

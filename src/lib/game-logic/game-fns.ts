@@ -110,7 +110,7 @@ export function lostTurn(game: Game): Game {
     .find(
       (chip) =>
         typeof chip.playerId === "undefined" &&
-        typeof chip.disabled === "undefined"
+        typeof chip.disabled === "undefined",
     );
   if (typeof largestAvailableChip === "undefined") {
     throw new Error("No chips left");
@@ -176,7 +176,7 @@ export function bankValueInGame(game: Game, value: number): Game {
     throw new Error("Must throw dice, before banking");
   }
   const bankable = bankableDiceValues(game.dices);
-  if (bankable.indexOf(value) === -1) {
+  if (!bankable.includes(value)) {
     throw new Error(`Value: ${value} is not bankable`);
   }
   const dices = game.dices.map((dice) => ({
@@ -189,7 +189,7 @@ export function bankValueInGame(game: Game, value: number): Game {
   ) {
     const score = diceScoreTotal(dices);
     const chipAvailable = game.chips.some((_, index) =>
-      chipStealable(game.chips, playerId, score, index)
+      chipStealable(game.chips, playerId, score, index),
     );
     if (chipAvailable === false) {
       return lostTurn({ ...game, dices });

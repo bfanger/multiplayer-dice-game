@@ -21,7 +21,7 @@ function buildUrl(path: string, params: Record<string, string>) {
   const query = { ...params };
   let url = path;
   for (const [param, value] of Object.entries(params)) {
-    const replaced = url.replace(`[${param}]`, value as string);
+    const replaced = url.replace(`[${param}]`, value);
     if (replaced !== url) {
       url = replaced;
       delete query[param];
@@ -31,25 +31,25 @@ function buildUrl(path: string, params: Record<string, string>) {
   return `/api/${url}${search ? `?${search}` : ""}`;
 }
 async function authenticated(
-  headers: RequestInit["headers"]
+  headers: RequestInit["headers"],
 ): Promise<RequestInit["headers"]> {
   try {
     const accessToken = await auth.accessToken();
-    if (!accessToken || "Authorization" in (headers || {})) {
+    if (!accessToken || "Authorization" in (headers ?? {})) {
       return headers;
     }
     return {
       ...headers,
       Authorization: `Bearer ${accessToken}`,
     };
-  } catch (_) {
+  } catch {
     return headers;
   }
 }
 
 export type Fetch = (
   info: RequestInfo,
-  init?: RequestInit
+  init?: RequestInit,
 ) => Promise<Response>;
 
 type Config = RequestInit & {
@@ -59,10 +59,10 @@ type Config = RequestInit & {
 async function wrapped(
   method: RequestInit["method"],
   path: string,
-  config: Config
+  config: Config,
 ): Promise<any> {
   const init = { ...config };
-  const params = init.params || {};
+  const params = init.params ?? {};
   delete init.params;
   let { fetch } = init;
   if (!fetch) {
@@ -77,23 +77,20 @@ async function wrapped(
   const response = await fetch(url, init);
   if (!response.ok) {
     throw new Error(
-      `${method} ${url} failed: ${response.status} ${response.statusText}`
+      `${method} ${url} failed: ${response.status} ${response.statusText}`,
     );
   }
   return response.json();
 }
 const api = {
-  get<T extends keyof GetResponse>(
-    path: T,
-    config?: Config
-  ): Promise<GetResponse[T]> {
-    return wrapped("GET", path, config || {});
+  get<T extends keyof GetResponse>(path: T, config?: Config) {
+    return wrapped("GET", path, config ?? {}) as Promise<GetResponse[T]>;
   },
   async post<T extends keyof PostResponse>(
     path: T,
     data: unknown,
-    config?: Config
-  ): Promise<PostResponse[T]> {
+    config?: Config,
+  ) {
     return wrapped("POST", path, {
       ...config,
       headers: {
@@ -101,7 +98,7 @@ const api = {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
-    });
+    }) as Promise<PostResponse[T]>;
   },
 };
 export default api;
