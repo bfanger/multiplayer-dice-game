@@ -1,4 +1,4 @@
-FROM node:18-alpine as build
+FROM node:24-slim AS build
 
 COPY . /app
 
@@ -6,8 +6,7 @@ RUN cd /app && npm install --legacy-peer-deps
 RUN cd /app && npm run build
 RUN cd /app && npm prune --production
 
-
-FROM node:18-alpine
+FROM node:24-slim AS runtime
 
 COPY --from=build /app/build/ /app/build
 COPY --from=build /app/dist/ /app/dist
