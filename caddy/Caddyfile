@@ -1,6 +1,6 @@
 dice-game.bfanger.nl {
   reverse_proxy app:8080
 }
-localhost:80 {
+:80 {
   reverse_proxy app:8080
 }
