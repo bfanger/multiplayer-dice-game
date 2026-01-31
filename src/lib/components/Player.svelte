@@ -34,29 +34,38 @@
 <style>
   .player {
     position: relative;
+
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    font-size: 1.3rem;
-    background-color: rgb(12, 87, 12);
+
     padding: 1rem;
     border-radius: 2rem;
+
+    font-size: 1.3rem;
+
+    background-color: rgb(12 87 12);
+
     &.active {
-      background-color: white;
-      color: black;
       font-weight: bold;
+      color: black;
+      background-color: white;
     }
+
     &.disabled {
       opacity: 0.5;
     }
   }
+
   .avatar {
-    border-radius: 50%;
     width: 8rem;
     height: 8rem;
-    object-fit: cover;
     margin-bottom: 1rem;
+    border-radius: 50%;
+
+    object-fit: cover;
   }
+
   .chips {
     position: absolute;
     top: -1rem;

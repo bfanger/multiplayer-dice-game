@@ -11,14 +11,18 @@
 
 <style>
   button {
-    background: #eaeaea;
-    color: #333;
-    font: 2.1rem sans-serif;
+    cursor: pointer;
+
     padding: 1.2rem 2.8rem;
     border-radius: 3rem;
-    box-shadow: 0 0 0.5rem 0.5rem rgba(0, 0, 0, 0.2);
+
+    font: 2.1rem sans-serif;
+    color: #333;
     letter-spacing: 0.5px;
-    cursor: pointer;
+
+    background: #eaeaea;
+    box-shadow: 0 0 0.5rem 0.5rem rgb(0 0 0 / 20%);
+
     &:hover {
       background: #fff;
     }

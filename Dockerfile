@@ -1,10 +1,10 @@
 FROM node:24-slim AS build
 
 COPY . /app
-
-RUN cd /app && npm install --legacy-peer-deps
-RUN cd /app && npm run build
-RUN cd /app && npm prune --production
+WORKDIR /app
+RUN npm install -g pnpm && pnpm install
+RUN npx svelte-kit sync && npm run build
+RUN pnpm prune --prod
 
 FROM node:24-slim AS runtime
 

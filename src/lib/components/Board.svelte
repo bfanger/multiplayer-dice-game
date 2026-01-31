@@ -238,12 +238,14 @@
 
 <style>
   .rows {
-    padding: 1.6rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 1.2rem;
+    align-items: center;
+
+    padding: 1.6rem;
   }
+
   .table,
   .chips,
   .bank,
@@ -251,25 +253,31 @@
     display: flex;
     flex-wrap: wrap;
   }
+
   .table {
     gap: 1.2rem;
   }
 
   .bank {
-    background: #072e14;
-    border: 2px solid silver;
-    min-height: 6rem;
-    min-width: 6rem;
-    padding: 1.5rem;
-    border-radius: 2rem;
     gap: 1.2rem;
+
+    min-width: 6rem;
+    min-height: 6rem;
+    padding: 1.5rem;
+    border: 2px solid silver;
+    border-radius: 2rem;
+
+    background: #072e14;
   }
+
   .score {
     min-width: 6rem;
-    color: #3ad36d;
+
     font: bold 3rem sans-serif;
     line-height: 6rem;
+    color: #3ad36d;
     text-align: center;
+
     &:not(.valid) {
       color: #8d8d8d;
     }
@@ -279,19 +287,23 @@
   .players {
     gap: 0.6rem;
   }
+
   .highscore {
-    font-size: 2.8rem;
     padding-left: 2rem;
+    font-size: 2.8rem;
   }
+
   .toasts {
     position: fixed;
     top: 1.2rem;
     right: 2.4rem;
+
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
     gap: 1rem;
+    align-items: flex-end;
   }
+
   .muted {
     opacity: 0.5;
   }

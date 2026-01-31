@@ -29,11 +29,14 @@
   .stack {
     position: relative;
   }
+
   .nested {
     position: absolute;
     top: 0.4rem;
     right: 0.3rem;
+
     border-radius: 0.6rem;
-    box-shadow: 0 0 2px rgba(#473616, 0.5);
+
+    box-shadow: 0 0 2px rgb(71 54 22 / 50%);
   }
 </style>

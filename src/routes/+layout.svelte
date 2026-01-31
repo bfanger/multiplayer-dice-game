@@ -10,14 +10,16 @@
 
 <style>
   :global(html) {
-    font-size: 10px;
     font-family: sans-serif;
+    font-size: 10px;
     color: white;
     background-color: #032c2c;
   }
+
   :global(body) {
     font-size: 1.4rem;
   }
+
   :global(svelte-app) {
     display: contents;
   }

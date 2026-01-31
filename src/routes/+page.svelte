@@ -78,14 +78,18 @@
     align-items: center;
     margin-top: 2rem;
   }
+
   .games {
     display: flex;
     flex-direction: column;
     align-items: center;
-    list-style: none;
-    padding: 0;
+
     margin: 0;
+    padding: 0;
+
+    list-style: none;
   }
+
   .join {
     float: right;
     margin-left: 1rem;

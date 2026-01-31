@@ -5,13 +5,15 @@ import ts from "typescript-eslint";
 import prettier from "eslint-config-prettier";
 import svelte from "eslint-plugin-svelte";
 import globals from "globals";
+import { defineConfig } from "eslint/config";
 
-export default ts.config(
+export default defineConfig(
   {
     ignores: [
       ".svelte-kit",
       ".vercel",
       "build",
+      "dist",
       "node_modules",
       "package",
       "vite.config.ts.timestamp-*.mjs",

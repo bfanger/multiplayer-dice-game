@@ -27,13 +27,15 @@
 
 <style>
   .toast {
-    padding: 1rem;
     width: clamp(20rem, max-content, 40rem);
     max-width: 80vw;
-    background-color: #f4f7e6;
-    color: black;
-    font: bold 1.6rem sans-serif;
+    padding: 1rem;
     border-radius: 1rem;
-    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
+
+    font: bold 1.6rem sans-serif;
+    color: black;
+
+    background-color: #f4f7e6;
+    box-shadow: 1px 1px 10px rgb(0 0 0 / 50%);
   }
 </style>

@@ -44,21 +44,26 @@
     display: grid;
     gap: 0.4rem;
   }
+
   label {
     text-align: right;
   }
+
   input {
     grid-column-start: 2;
     min-width: 20rem;
   }
 
   .link {
-    background: transparent;
-    border: 0;
-    text-decoration: underline;
-    color: #88cfff;
-    margin-left: 8rem;
-    margin-top: 2rem;
     cursor: pointer;
+
+    margin-top: 2rem;
+    margin-left: 8rem;
+    border: 0;
+
+    color: #88cfff;
+    text-decoration: underline;
+
+    background: transparent;
   }
 </style>
