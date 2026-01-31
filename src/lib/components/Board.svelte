@@ -1,10 +1,9 @@
 <script lang="ts">
   /* eslint-disable @typescript-eslint/no-unsafe-call */
-  import { onMount } from "svelte";
   import { flip } from "svelte/animate";
   import { crossfade, fade } from "svelte/transition";
   import { sortBy, groupBy } from "lodash-es";
-  import client from "$lib/client";
+  import client from "$lib/client.svelte";
   import {
     chipPoints,
     chipStack,
@@ -35,20 +34,18 @@
   import { playerById } from "$lib/game-logic/player-fns";
   import Button from "./Button.svelte";
   import RegisterForm from "./RegisterForm.svelte";
+  import { browser } from "$app/environment";
+  import Spinner from "./Spinner.svelte";
 
   type Props = {
     game: Game;
-    me?: PlayerType | undefined;
+    me?: PlayerType;
   };
-
-  let { game, me = $bindable(undefined) }: Props = $props();
+  let { game, me }: Props = $props();
 
   let showToast = $state<ShowToastFn>(() => undefined);
 
   const [receive, send] = crossfade({ fallback: (node) => fade(node) });
-  onMount(async () => {
-    me = await client.me();
-  });
   function chipDisabled(chip: ChipType) {
     if (game.phase !== "BANKED") {
       return true;
@@ -102,10 +99,7 @@
       2.5,
     );
   }
-  function onSignup() {
-    location.reload();
-  }
-  async function onJoin() {
+  async function joinGame() {
     await client.joinGame(game.id);
   }
   let chips = $derived(
@@ -210,12 +204,14 @@
         {#if game.players.find((p) => p.id === me?.id)}
           <p class="muted">Wachten op andere spelers</p>
         {:else}
-          <Button onclick={onJoin}>Meedoen</Button>
+          <Button onclick={joinGame}>Meedoen</Button>
         {/if}
-      {:else}
+      {:else if browser}
         <p class="muted">Toeschouwer modus</p>
         <h2>Meedoen?</h2>
-        <RegisterForm signup={onSignup} />
+        <RegisterForm onregistered={joinGame} />
+      {:else}
+        <Spinner />
       {/if}
     {:else if game.turn === me?.id}
       {#if game.phase === "THROWN"}

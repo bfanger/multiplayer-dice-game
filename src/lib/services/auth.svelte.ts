@@ -14,6 +14,7 @@ const auth = new (class {
   }
   setAccessToken(token: string): void {
     sessionStorage.setItem("dicegame_token", token);
+    this.accessToken = token;
   }
 })();
 export default auth;

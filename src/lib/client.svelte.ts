@@ -1,10 +1,8 @@
-import { readable } from "svelte/store";
-import type { Readable } from "svelte/store";
 import type { Game, Player } from "./game-logic/types";
 import api from "./services/api";
-import type { Fetch } from "./services/api";
 import auth from "./services/auth.svelte";
 import type { Socket } from "socket.io";
+import { browser } from "$app/environment";
 
 type Handshake = { auth: { token?: string } };
 let ioPromise: ReturnType<typeof injectSocketIO> | undefined;
@@ -27,10 +25,56 @@ function injectSocketIO(): Promise<(handshake: Handshake) => Socket> {
   }
   return ioPromise;
 }
+
+class GameState {
+  current = $state(undefined as any as Game);
+
+  constructor(initial: Game) {
+    this.current = initial;
+    $effect(() => {
+      const abortController = new AbortController();
+      const { signal } = abortController;
+      void this.connect(auth.accessToken).then((socket) => {
+        if (signal.aborted) {
+          socket.disconnect();
+          return;
+        }
+        const set = (game: Game) => {
+          this.current = game;
+        };
+        socket.on(`games/${this.current.id}`, set);
+        socket.emit("join", this.current.id);
+        signal.addEventListener("abort", () => {
+          socket.off(`games/${this.current.id}`, set);
+          socket.emit("leave", this.current.id);
+          socket.disconnect();
+        });
+      });
+      return () => abortController.abort();
+    });
+  }
+
+  private async connect(token: string | undefined) {
+    const io = await injectSocketIO();
+    return io({ auth: { token } });
+  }
+}
+
 const client = {
-  async me(fetch?: Fetch): Promise<Player> {
+  GameState,
+  /**
+   * Usage:
+   * let playerPromise = $derived(client.maybePlayer());
+   */
+  async maybePlayer(): Promise<Player | undefined> {
+    if (!browser || !auth.accessToken) {
+      return undefined;
+    }
+    return client.me();
+  },
+  async me(): Promise<Player> {
     auth.assertLoggedIn();
-    return api.get("me.json", { fetch }); // @todo cache player info?
+    return api.get("me.json"); // @todo cache player info?
   },
   async createGame(): Promise<string> {
     const response = await api.post(`games.json`, "");
@@ -59,19 +103,6 @@ const client = {
       { chipIndex },
       { params: { id: gameId } },
     );
-  },
-  async gameState(id: string): Promise<Readable<Game>> {
-    const io = await injectSocketIO();
-    return readable<Game>(undefined, (set) => {
-      const socket = io({ auth: { token: auth.accessToken } });
-      socket.on(`games/${id}`, set);
-      socket.emit("join", id);
-      return () => {
-        socket.off(`games/${id}`, set);
-        socket.emit("leave", id);
-        socket.disconnect();
-      };
-    });
   },
 };
 

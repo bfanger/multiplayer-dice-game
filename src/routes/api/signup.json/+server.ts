@@ -15,8 +15,7 @@ export const POST: RequestHandler = async ({ request }) => {
     iat: Math.round(Date.now() / 1000),
     oid: createHash("sha1")
       .update(Date.now() + name + email)
-      .digest()
-      .toString(),
+      .digest("hex"),
     unique_name: email || `user_${Date.now()}`,
     name,
   };

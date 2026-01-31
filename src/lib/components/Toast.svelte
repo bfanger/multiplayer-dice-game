@@ -1,25 +1,25 @@
-<script lang="ts" module>
-  export type ShowToastFn = (message: string, ttl?: number) => void;
-</script>
-
 <script lang="ts">
-  import { writable } from "svelte/store";
+  import { SvelteMap } from "svelte/reactivity";
   import { slide } from "svelte/transition";
+  export type ShowToastFn = (message: string, ttl?: number) => void;
 
   type Toast = { message: string };
+  type Props = {
+    showToast: ShowToastFn;
+  };
+  let { showToast = $bindable() }: Props = $props();
+  const toasts = new SvelteMap<Toast, Toast>();
 
-  const toasts = writable<Toast[]>([]);
-
-  export const showToast: ShowToastFn = (message: string, ttl = 4) => {
+  showToast = (message: string, ttl = 4) => {
     const toast: Toast = { message };
-    $toasts = [...$toasts, toast];
+    toasts.set(toast, toast);
     setTimeout(() => {
-      $toasts = $toasts.filter((entry) => entry !== toast);
+      toasts.delete(toast);
     }, ttl * 1000);
   };
 </script>
 
-{#each $toasts as toast (toast)}
+{#each toasts.values() as toast (toast)}
   <div class="toast" transition:slide|local={{ duration: 300 }}>
     {toast.message}
   </div>

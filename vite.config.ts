@@ -1,10 +1,12 @@
 import { sveltekit } from "@sveltejs/kit/vite";
+import devtoolsJson from "vite-plugin-devtools-json";
 import { defineConfig } from "vitest/config";
 import { Server } from "socket.io";
 import type { Server as HttpServer } from "http";
 
 export default defineConfig({
   plugins: [
+    devtoolsJson(),
     sveltekit(),
     {
       name: "multiplayer",

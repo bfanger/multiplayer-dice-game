@@ -25,6 +25,8 @@
         onbust?.(event.playerId);
       } else if (event.type === "turn") {
         onturn?.(event.playerId);
+      } else if (event.type === "start") {
+        // No-op for now
       } else {
         console.warn("Unknown event type:", event.type);
       }
