@@ -70,7 +70,6 @@
     "zod": "^4.3.6"
   },
   "dependencies": {
-    "@azure/msal-browser": "^5.1.0",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "gravatar": "^1.8.2",

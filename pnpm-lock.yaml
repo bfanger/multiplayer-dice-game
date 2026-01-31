@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@azure/msal-browser':
-        specifier: ^5.1.0
-        version: 5.1.0
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
@@ -143,14 +140,6 @@ importers:
         version: 4.3.6
 
 packages:
-
-  '@azure/msal-browser@5.1.0':
-    resolution: {integrity: sha512-5tZcp1zcALSLJvnxkmJ8MYxLtZzEyq28wX2jSV4Kz2QaHty4eYIb/Pc44DARLfgHD+G9F82k9nD7J89MbFRQxA==}
-    engines: {node: '>=0.8.0'}
-
-  '@azure/msal-common@16.0.3':
-    resolution: {integrity: sha512-3aedNnM0CHVuVZ+BqembdZWgovqe96BJ4YxGoIK0+qhoBZQsAhfwXdhjen72K94pkSQHtzlJ7fAq6w7knFZsng==}
-    engines: {node: '>=0.8.0'}
 
   '@babel/code-frame@7.28.6':
     resolution: {integrity: sha512-JYgintcMjRiCvS8mMECzaEn+m3PfoQiyqukOMCCVQtoJGYJw8j/8LBJEiqkHLkfwCcs74E3pbAUFNg7d9VNJ+Q==}
@@ -2679,12 +2668,6 @@ packages:
     resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
 
 snapshots:
-
-  '@azure/msal-browser@5.1.0':
-    dependencies:
-      '@azure/msal-common': 16.0.3
-
-  '@azure/msal-common@16.0.3': {}
 
   '@babel/code-frame@7.28.6':
     dependencies:

@@ -1,6 +1,6 @@
 import type { GameListing } from "../../routes/api/games.json/+server";
 import type { Game, Player } from "../game-logic/types";
-import auth from "./auth";
+import auth from "./auth.svelte";
 
 type GetResponse = {
   "games.json": GameListing[];
@@ -30,17 +30,16 @@ function buildUrl(path: string, params: Record<string, string>) {
   const search = new URLSearchParams(query).toString();
   return `/api/${url}${search ? `?${search}` : ""}`;
 }
-async function authenticated(
+function authenticated(
   headers: RequestInit["headers"],
-): Promise<RequestInit["headers"]> {
+): RequestInit["headers"] {
   try {
-    const accessToken = await auth.accessToken();
-    if (!accessToken || "Authorization" in (headers ?? {})) {
+    if (!auth.accessToken || "Authorization" in (headers ?? {})) {
       return headers;
     }
     return {
       ...headers,
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${auth.accessToken}`,
     };
   } catch {
     return headers;
@@ -72,7 +71,7 @@ async function wrapped(
     fetch = window.fetch;
   }
   init.method = method;
-  init.headers = await authenticated(init.headers);
+  init.headers = authenticated(init.headers);
   const url = buildUrl(path, params);
   const response = await fetch(url, init);
   if (!response.ok) {

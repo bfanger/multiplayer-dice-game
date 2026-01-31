@@ -1,6 +1,5 @@
 <script lang="ts">
   import api from "$lib/services/api";
-  import auth from "$lib/services/auth";
 
   type Props = {
     signup: () => void;
@@ -18,11 +17,6 @@
     sessionStorage.setItem("dicegame_token", token);
     signup();
   }
-
-  async function onLogin() {
-    await auth.login();
-    location.reload();
-  }
 </script>
 
 <form class="register" onsubmit={onRegister}>
@@ -37,7 +31,6 @@
   />
   <input type="submit" value="Aanmelden" />
 </form>
-<button class="link" onclick={onLogin}>Ik ben Triple medewerker</button>
 
 <style>
   .register {
@@ -52,18 +45,5 @@
   input {
     grid-column-start: 2;
     min-width: 20rem;
-  }
-
-  .link {
-    cursor: pointer;
-
-    margin-top: 2rem;
-    margin-left: 8rem;
-    border: 0;
-
-    color: #88cfff;
-    text-decoration: underline;
-
-    background: transparent;
   }
 </style>

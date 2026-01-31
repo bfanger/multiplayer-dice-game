@@ -3,7 +3,7 @@ import type { Readable } from "svelte/store";
 import type { Game, Player } from "./game-logic/types";
 import api from "./services/api";
 import type { Fetch } from "./services/api";
-import auth from "./services/auth";
+import auth from "./services/auth.svelte";
 import type { Socket } from "socket.io";
 
 type Handshake = { auth: { token?: string } };
@@ -29,10 +29,7 @@ function injectSocketIO(): Promise<(handshake: Handshake) => Socket> {
 }
 const client = {
   async me(fetch?: Fetch): Promise<Player> {
-    const accessToken = await auth.accessToken().catch(() => false);
-    if (!accessToken) {
-      throw new Error("Not logged in");
-    }
+    auth.assertLoggedIn();
     return api.get("me.json", { fetch }); // @todo cache player info?
   },
   async createGame(): Promise<string> {
@@ -65,9 +62,8 @@ const client = {
   },
   async gameState(id: string): Promise<Readable<Game>> {
     const io = await injectSocketIO();
-    const accessToken = await auth.accessToken().catch(() => undefined);
     return readable<Game>(undefined, (set) => {
-      const socket = io({ auth: { token: accessToken } });
+      const socket = io({ auth: { token: auth.accessToken } });
       socket.on(`games/${id}`, set);
       socket.emit("join", id);
       return () => {
