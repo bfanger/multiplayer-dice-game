@@ -1,6 +1,8 @@
 <script lang="ts">
   import api from "$lib/services/api";
   import auth from "$lib/services/auth.svelte";
+  import Button from "./Button.svelte";
+  import TextInput from "./TextInput.svelte";
 
   type Props = {
     onregistered?: () => void;
@@ -20,30 +22,21 @@
 </script>
 
 <form class="register" onsubmit={signUp}>
-  <label for="name">Naam</label>
-  <input id="name" name="name" type="text" required />
-  <label for="email">E-mailadres</label>
-  <input
-    id="email"
+  <TextInput label="Naam" name="name" required />
+  <TextInput
+    label="E-mailadres (optioneel)"
     name="email"
     type="email"
-    placeholder="Voor gravatar (optioneel)"
+    placeholder="Voor gravatar"
   />
-  <input type="submit" value="Aanmelden" />
+  <Button>Aanmelden</Button>
 </form>
 
 <style>
   .register {
-    display: grid;
-    gap: 0.4rem;
-  }
-
-  label {
-    text-align: right;
-  }
-
-  input {
-    grid-column-start: 2;
-    min-width: 20rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    width: clamp(10rem, 24rem, 100vw - 6rem);
   }
 </style>

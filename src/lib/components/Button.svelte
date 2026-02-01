@@ -3,7 +3,7 @@
 
   type Props = {
     children: Snippet;
-    onclick: () => void;
+    onclick?: () => void;
   };
 
   let { children, onclick }: Props = $props();
@@ -15,18 +15,29 @@
   button {
     cursor: pointer;
 
-    padding: 1.2rem 2.8rem;
-    border-radius: 3rem;
+    padding: 0.4rem 0.8rem;
+    border: 0.2rem solid #398a03;
+    border-radius: 0.8rem;
 
-    font: 2.1rem sans-serif;
-    color: #333;
-    letter-spacing: 0.5px;
+    font:
+      1.2rem "Poetsen One",
+      sans-serif;
+    color: #fff;
+    text-shadow:
+      -0.1rem -0.1rem 0 #000,
+      0.1rem -0.1rem 0 #000,
+      -0.1rem 0.1rem 0 #000,
+      0.1rem 0.1rem 0 #000;
 
-    background: #eaeaea;
-    box-shadow: 0 0 0.5rem 0.5rem rgb(0 0 0 / 20%);
+    background: linear-gradient(to bottom, #6cf40e 0%, #58d70b 100%);
+    box-shadow: inset 0 0.2rem 0 0 #b4ff62;
 
     &:hover {
-      background: #fff;
+      filter: brightness(1.1);
+    }
+
+    &:active {
+      filter: brightness(0.9);
     }
   }
 </style>
