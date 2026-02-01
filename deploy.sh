@@ -6,5 +6,5 @@ docker compose down
 docker compose pull
 docker compose build
 docker compose up -d
-echo "To remove unused images, run:"
-echo "  docker image prune -a"
+echo "To remove unused docker files, run:"
+echo "  docker system prune -a"
