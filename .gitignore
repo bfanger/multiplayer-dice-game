@@ -4,4 +4,5 @@ node_modules
 /build
 /dist
 /functions
+/docker-compose.override.yml
 .env
