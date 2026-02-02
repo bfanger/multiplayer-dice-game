@@ -6,12 +6,10 @@
   import Button from "$lib/components/Button.svelte";
   import Modal from "$lib/components/Modal.svelte";
   import Title from "$lib/components/Title.svelte";
-  import type { Game } from "$lib/game-logic/types.js";
-  import { untrack } from "svelte";
 
   let { data } = $props();
 
-  const gameState = new client.GameState(untrack(() => data.game as Game));
+  let gameState = $derived(new client.GameState(data.game));
   let game = $derived(gameState.current);
 </script>
 

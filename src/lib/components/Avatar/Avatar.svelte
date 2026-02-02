@@ -16,7 +16,7 @@
   let { avatar, active }: Props = $props();
 </script>
 
-<div class="avatar" class:active class:default={active === undefined}>
+<div class="avatar" class:active class:inactive={active === false}>
   <img
     class="image"
     src={avatars[avatar.index % avatars.length]}
@@ -27,33 +27,38 @@
 
 <style>
   .avatar {
+    overflow: hidden;
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
+    box-sizing: content-box;
     width: 4.2em;
     height: 4.2em;
-    border: 0.125rem solid #0d7880aa;
+    padding: 0.2em;
+    border: 0.125rem solid #0d7880;
     border-radius: 1.3em;
 
     font-size: var(--font-size, inherit);
 
     background: #fff;
 
-    &.default {
-      border-color: #0d7880;
+    &.inactive {
+      border-width: 1px;
     }
 
     &.active {
       border-color: var(--color-text);
+      border-width: 1px;
+      outline: 2px solid var(--color-text);
     }
   }
 
   .image {
     display: inline-block;
 
-    width: calc(100% - 0.6em);
-    height: calc(100% - 0.6em);
+    width: 100%;
+    height: 100%;
     border-radius: 0.9em;
 
     object-fit: contain;

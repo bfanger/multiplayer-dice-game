@@ -36,8 +36,8 @@
     background: linear-gradient(to top, #239ca4 0%, #41aead 100%);
 
     @media (width <= 600px) {
-      padding-bottom: 0.5rem;
-      border-bottom: 0.2rem solid #0d7880;
+      padding-block: 0.5rem;
+      border-block: 0.2rem solid #0d7880;
     }
 
     @media (width > 600px) {
@@ -56,7 +56,7 @@
     background: #c7ffdf;
 
     @media (width <= 600px) {
-      border-bottom: 0.2rem solid #0d7880;
+      border-block: 0.2rem solid #0d7880;
     }
 
     @media (width > 600px) {
