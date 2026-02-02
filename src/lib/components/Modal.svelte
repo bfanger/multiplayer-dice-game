@@ -21,6 +21,7 @@
     top: 0;
     left: 0;
 
+    overflow-y: scroll;
     display: grid;
     grid-template-rows: 1fr auto 2fr;
     justify-content: center;
@@ -44,7 +45,6 @@
   .body {
     width: max-content;
     max-width: calc(100vw - 6rem);
-    padding: 1rem 1.4rem;
     border: 0.2rem solid #0d7880;
     border-radius: 1.6rem;
 

@@ -6,10 +6,16 @@ export type Game = {
   dices: Dice[];
   chips: Chip[];
 };
+
+export type PlayerAvatar = {
+  index: number;
+  color: string;
+};
+
 export type Player = {
   id: string;
   name: string;
-  avatar: string;
+  avatar: PlayerAvatar;
   connected?: true;
 };
 

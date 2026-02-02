@@ -17,7 +17,7 @@
 </script>
 
 <button class="chip" class:flipped {disabled} {onclick}>
-  <div class="value">{value}</div>
+  <div class="value"><span class="font">{value}</span></div>
   <div class="points">{points}</div>
 </button>
 
@@ -29,16 +29,31 @@
     flex-direction: column;
     align-items: center;
 
-    width: 4rem;
-    height: 6rem;
-    border: #e2c184 outset 0.2rem;
-    border-radius: 0.6rem;
+    width: 4em;
+    height: 6em;
+    border: #e2c184 outset 0.2em;
+    border-radius: 0.6em;
+
+    font-family: "Poetsen One", sans-serif;
+    font-size: 0.75rem;
 
     appearance: none;
     background: #ebb450;
 
     &:disabled {
       cursor: not-allowed;
+    }
+
+    @media (width <= 600px) {
+      font-size: 0.5rem;
+    }
+
+    @media (width <= 480px) {
+      font-size: 0.4rem;
+    }
+
+    @media (width <= 420px) {
+      font-size: 0.3rem;
     }
   }
 
@@ -47,12 +62,15 @@
     align-items: center;
     justify-content: center;
 
-    width: 3.4rem;
+    width: 3.4em;
     height: 50%;
     border-bottom: 1px solid #333;
 
-    font: bold 1.8rem sans-serif;
     color: #1c1f3b;
+
+    .font {
+      font-size: 1.8em;
+    }
 
     .flipped & {
       display: none;
@@ -66,7 +84,7 @@
 
     height: 50%;
 
-    font: 900 2rem sans-serif;
+    font-size: 2.2em;
     color: #a03e10;
 
     .flipped & {

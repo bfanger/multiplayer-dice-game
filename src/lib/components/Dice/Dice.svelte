@@ -15,6 +15,7 @@
   class:even={value % 2 === 0}
   class:odd={value % 2 === 1}
   class:six={value === 6}
+  class:inactive={!onclick}
   {disabled}
   {onclick}
 >
@@ -31,11 +32,13 @@
 
     display: inline-block;
 
-    width: 6rem;
-    height: 6rem;
+    width: 6em;
+    height: 6em;
     padding: 0;
     border: 0.3rem outset #ffd;
-    border-radius: 1.2rem;
+    border-radius: 1.2em;
+
+    font-size: 0.75rem;
 
     appearance: none;
     background-color: #eeeeb1;
@@ -43,6 +46,10 @@
     &:disabled {
       cursor: not-allowed;
       opacity: 0.7;
+    }
+
+    &.inactive {
+      pointer-events: none;
     }
 
     &:active {
@@ -62,7 +69,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
 
-        font-size: 5rem;
+        font-size: 5em;
         color: red;
       }
 
@@ -76,9 +83,9 @@
     position: absolute;
     transform: translate(-50%, -50%);
 
-    width: 0.8rem;
-    height: 0.8rem;
-    border-radius: 0.4rem;
+    width: 0.8em;
+    height: 0.8em;
+    border-radius: 0.4em;
 
     background: #333;
 

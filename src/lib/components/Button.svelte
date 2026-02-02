@@ -14,6 +14,7 @@
 <style>
   button {
     cursor: pointer;
+    user-select: none;
 
     padding: 0.4rem 0.8rem;
     border: 0.2rem solid #398a03;

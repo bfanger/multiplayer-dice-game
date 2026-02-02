@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Dice from "$lib/components/Dice.svelte";
+  import Dice from "$lib/components/Dice/Dice.svelte";
 </script>
 
 <Dice value={1} />

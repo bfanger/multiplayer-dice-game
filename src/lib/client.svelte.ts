@@ -3,6 +3,7 @@ import api from "./services/api";
 import auth from "./services/auth.svelte";
 import type { Socket } from "socket.io";
 import { browser } from "$app/environment";
+import { untrack } from "svelte";
 
 type Handshake = { auth: { token?: string } };
 let ioPromise: ReturnType<typeof injectSocketIO> | undefined;
@@ -27,10 +28,14 @@ function injectSocketIO(): Promise<(handshake: Handshake) => Socket> {
 }
 
 class GameState {
-  current = $state(undefined as any as Game);
+  current = $state<Game>();
 
-  constructor(initial: Game) {
-    this.current = initial;
+  constructor(initial: Game | undefined) {
+    this.current = untrack(() => initial);
+    const id = untrack(() => initial?.id);
+    if (!id) {
+      return;
+    }
     $effect(() => {
       const abortController = new AbortController();
       const { signal } = abortController;
@@ -42,11 +47,11 @@ class GameState {
         const set = (game: Game) => {
           this.current = game;
         };
-        socket.on(`games/${this.current.id}`, set);
-        socket.emit("join", this.current.id);
+        socket.on(`games/${id}`, set);
+        socket.emit("join", id);
         signal.addEventListener("abort", () => {
-          socket.off(`games/${this.current.id}`, set);
-          socket.emit("leave", this.current.id);
+          socket.off(`games/${id}`, set);
+          socket.emit("leave", id);
           socket.disconnect();
         });
       });

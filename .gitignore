@@ -6,3 +6,5 @@ node_modules
 /functions
 /docker-compose.override.yml
 .env
+*storybook.log
+storybook-static

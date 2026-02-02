@@ -5,6 +5,7 @@
     "src/**/*.js",
     "src/**/*.svelte",
     // Additional extensions for eslint
+    ".storybook/*.ts",
     "**/*.ts",
     "**/*.cjs",
     ".*.cjs",

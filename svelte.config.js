@@ -6,5 +6,6 @@ export default {
   preprocess: runesMode(),
   kit: {
     adapter: adapter({ precompress: true }),
+    experimental: { remoteFunctions: true },
   },
 };

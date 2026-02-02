@@ -1,0 +1,37 @@
+@font-face {
+  font-family: Dosis;
+  font-weight: 200 800;
+  font-style: normal;
+
+  font-display: block;
+  src: url("./assets/fonts/Dosis-VariableFont_wght.woff2")
+    format("woff2-variations");
+}
+
+@font-face {
+  font-family: "Poetsen One";
+  font-weight: 400;
+  font-style: normal;
+
+  src: url("./assets/fonts/PoetsenOne-Regular.woff2") format("woff2");
+}
+
+:root {
+  --color-background: #95e4ff;
+  --color-text: #5f3822;
+  --heading-font: 3rem "Poetsen One", sans-serif;
+
+  font-family: Dosis, sans-serif;
+  color: var(--color-text);
+  background: var(--color-background);
+}
+
+* {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+svelte-app {
+  display: contents;
+}

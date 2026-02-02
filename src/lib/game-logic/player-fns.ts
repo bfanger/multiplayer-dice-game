@@ -1,25 +1,33 @@
 import { jwtDecode } from "jwt-decode";
-import gravatar from "gravatar";
-import type { Player } from "./types";
+import type { Player, PlayerAvatar } from "./types";
 
 export function fakePlayer(): Player {
   fakePlayer.autoincrement += 1;
   return {
     id: `fake${fakePlayer.autoincrement}`,
-    avatar: "anonymous.jpg",
+    avatar: avatarFromId("000000000000000000000000"),
     name: `Fake player (${fakePlayer.autoincrement})`,
   };
 }
 fakePlayer.autoincrement = 0;
 
 export function playerFromToken(jwt: string): Player {
-  const data = jwtDecode<{ oid: string; name: string; unique_name: string }>(
-    jwt,
-  );
+  const data = jwtDecode<{
+    oid: string;
+    name: string;
+    unique_name: string;
+  }>(jwt);
   return {
     id: data.oid,
     name: data.name,
-    avatar: gravatar.url(data.unique_name),
+    avatar: avatarFromId(data.oid),
+  };
+}
+
+export function avatarFromId(oid: string): PlayerAvatar {
+  return {
+    index: oidToNumber(oid, 0, 4),
+    color: `oklch(0.95 0.1 ${oidToNumber(oid, 4, 360)} / 1);`,
   };
 }
 
@@ -42,4 +50,10 @@ export function playerById(players: Player[], id: string): Player {
     throw new Error(`Player ${id} not found`);
   }
   return player;
+}
+
+function oidToNumber(hex: string, offset: number, max: number): number {
+  const section = hex.slice(offset, offset + Math.log(max));
+  const value = parseInt(section, 16);
+  return value % max;
 }

@@ -26,7 +26,7 @@
     Dice as DiceType,
   } from "$lib/game-logic/types";
   import Chip from "./Chip.svelte";
-  import Dice from "./Dice.svelte";
+  import Dice from "./Dice/Dice.svelte";
   import Player from "./Player.svelte";
   import GameEvents from "./GameEvents.svelte";
   import Toast from "./Toast.svelte";
@@ -35,7 +35,8 @@
   import Button from "./Button.svelte";
   import RegisterForm from "./RegisterForm.svelte";
   import { browser } from "$app/environment";
-  import Spinner from "./Spinner.svelte";
+  import Spinner from "./Spinner/Spinner.svelte";
+  import Title from "./Title.svelte";
 
   type Props = {
     game: Game;
@@ -142,7 +143,7 @@
           name={player.name}
           avatar={player.avatar}
           active={player.id === game.turn}
-          disabled={!player.connected}
+          offline={!player.connected}
           chips={chipStack(game.chips, player.id)}
         />
       </span>
@@ -161,6 +162,7 @@
       {/each}
     </ol>
   {:else}
+    {@const subtotal = diceScoreSubtotal(game.dices)}
     <div class="bank">
       {#each bankedDice(game.dices) as dice (game.dices.indexOf(dice))}
         <span
@@ -171,11 +173,14 @@
           <Dice value={dice.value} />
         </span>
       {/each}
-      <span
-        class="score"
-        class:valid={diceScoreValid(game.dices) && game.phase !== "NEW-TURN"}
-        >{diceScoreSubtotal(game.dices)}</span
-      >
+      {#if subtotal > 0}
+        <span
+          class="score"
+          class:valid={diceScoreValid(game.dices) && game.phase !== "NEW-TURN"}
+        >
+          {subtotal}
+        </span>
+      {/if}
     </div>
     <div class="table">
       {#each thrownDice(game.dices) as dice (game.dices.indexOf(dice))}
@@ -192,38 +197,38 @@
         </span>
       {/each}
     </div>
-
-    {#if !game.turn}
-      {#if me && hasHostAccess(game, me)}
-        <Button onclick={() => client.startGame(game.id)}>Start spel</Button>
-      {:else}
-        <p class="muted">Wacht todat het spel gestart wordt...</p>
-      {/if}
-    {:else if game.turn !== me?.id}
-      {#if me}
-        {#if game.players.find((p) => p.id === me?.id)}
-          <p class="muted">Wachten op andere spelers</p>
+    <div class="actions">
+      {#if !game.turn}
+        {#if me && hasHostAccess(game, me)}
+          <Button onclick={() => client.startGame(game.id)}>Start spel</Button>
         {:else}
-          <Button onclick={joinGame}>Meedoen</Button>
+          <p class="muted">Wacht todat het spel gestart wordt...</p>
         {/if}
-      {:else if browser}
-        <p class="muted">Toeschouwer modus</p>
-        <h2>Meedoen?</h2>
-        <RegisterForm onregistered={joinGame} />
-      {:else}
-        <Spinner />
+      {:else if game.turn !== me?.id}
+        {#if me}
+          {#if game.players.find((p) => p.id === me?.id)}
+            <p class="muted">Wachten op andere spelers</p>
+          {:else}
+            <Button onclick={joinGame}>Meedoen</Button>
+          {/if}
+        {:else if browser}
+          <Title>Meedoen?</Title>
+          <RegisterForm onregistered={joinGame} />
+        {:else}
+          <Spinner />
+        {/if}
+      {:else if game.turn === me?.id}
+        {#if game.phase === "THROWN"}
+          Selecteer dobbelstenen
+        {:else if game.phase === "NEW-TURN" || thrownDice(game.dices).length > 0}
+          <Button onclick={() => client.throwDice(game.id)}
+            >Gooi dobbelstenen
+          </Button>
+        {:else}
+          Selecteer een chip
+        {/if}
       {/if}
-    {:else if game.turn === me?.id}
-      {#if game.phase === "THROWN"}
-        Selecteer dobbelstenen
-      {:else if game.phase === "NEW-TURN" || thrownDice(game.dices).length > 0}
-        <Button onclick={() => client.throwDice(game.id)}
-          >Gooi dobbelstenen
-        </Button>
-      {:else}
-        Selecteer een chip
-      {/if}
-    {/if}
+    </div>
   {/if}
 </main>
 <div class="toasts">
@@ -236,10 +241,10 @@
   .rows {
     display: flex;
     flex-direction: column;
-    gap: 1.2rem;
+    gap: 0.75em;
     align-items: center;
 
-    padding: 1.6rem;
+    padding-block: 1.2em;
   }
 
   .table,
@@ -248,59 +253,74 @@
   .players {
     display: flex;
     flex-wrap: wrap;
+    padding-inline: 1.2em;
   }
 
   .table {
-    gap: 1.2rem;
+    gap: 1.2em;
+    min-height: 4.5rem;
   }
 
   .bank {
-    gap: 1.2rem;
+    display: flex;
+    gap: 1em;
+    justify-content: center;
 
-    min-width: 6rem;
-    min-height: 6rem;
-    padding: 1.5rem;
-    border: 2px solid silver;
-    border-radius: 2rem;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 7.3rem;
+    padding: 1.4em 0.5rem;
 
-    background: #072e14;
+    background: #085036;
   }
 
   .score {
-    min-width: 6rem;
-
-    font: bold 3rem sans-serif;
-    line-height: 6rem;
+    font-family: "Poetsen One", sans-serif;
+    font-size: 3em;
     color: #3ad36d;
     text-align: center;
 
     &:not(.valid) {
-      color: #8d8d8d;
+      color: #e9fff0;
     }
   }
 
-  .chips,
+  .chips {
+    gap: 0.6em;
+
+    @media (width<=600px) {
+      gap: 0.4em;
+    }
+  }
+
   .players {
-    gap: 0.6rem;
+    gap: 1em;
   }
 
   .highscore {
-    padding-left: 2rem;
-    font-size: 2.8rem;
+    padding-left: 2em;
+    font-size: 2.8em;
   }
 
   .toasts {
     position: fixed;
-    top: 1.2rem;
-    right: 2.4rem;
+    top: 1.2em;
+    right: 0;
+    left: 0;
 
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    align-items: flex-end;
+    gap: 0.5rem;
+    align-items: center;
   }
 
   .muted {
     opacity: 0.5;
+  }
+
+  .actions {
+    min-height: 2.6rem;
+    font-size: 1.2rem;
+    font-weight: 600;
   }
 </style>

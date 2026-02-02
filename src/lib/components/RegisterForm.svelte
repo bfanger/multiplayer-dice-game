@@ -23,13 +23,7 @@
 
 <form class="register" onsubmit={signUp}>
   <TextInput label="Naam" name="name" required />
-  <TextInput
-    label="E-mailadres (optioneel)"
-    name="email"
-    type="email"
-    placeholder="Voor gravatar"
-  />
-  <Button>Aanmelden</Button>
+  <Button>Verder</Button>
 </form>
 
 <style>
@@ -37,6 +31,8 @@
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
+
     width: clamp(10rem, 24rem, 100vw - 6rem);
+    margin-top: 2rem;
   }
 </style>
