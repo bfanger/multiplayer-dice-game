@@ -32,7 +32,7 @@
     flex-direction: column;
     gap: 1.2rem;
 
-    width: clamp(10rem, 24rem, 100vw - 6rem);
+    width: clamp(10rem, 24rem, 100vw - 8rem);
     margin-top: 2rem;
   }
 </style>

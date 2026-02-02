@@ -35,24 +35,24 @@
     width: 6em;
     height: 6em;
     padding: 0;
-    border: 0.3rem outset #ffd;
+    border: 0.3rem outset #fffcd5;
     border-radius: 1.2em;
 
     font-size: 0.75rem;
 
     appearance: none;
-    background-color: #eeeeb1;
+    background-color: #fff5d3;
 
     &:disabled {
       cursor: not-allowed;
-      opacity: 0.7;
+      opacity: 0.6;
     }
 
     &.inactive {
       pointer-events: none;
     }
 
-    &:active {
+    &:not(:disabled):active {
       background-color: #ffff7b;
     }
 

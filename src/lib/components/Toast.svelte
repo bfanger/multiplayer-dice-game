@@ -38,5 +38,9 @@
 
     background-color: #f4f7e6;
     box-shadow: 1px 1px 10px rgb(0 0 0 / 50%);
+
+    @media (width < 600px) {
+      font-size: 1.2rem;
+    }
   }
 </style>

@@ -25,7 +25,7 @@
 </script>
 
 <div class="player" class:active class:offline>
-  <Avatar {avatar} />
+  <Avatar {avatar} {active} />
   {#if offline}
     <div class="label">Offline</div>
   {:else}
@@ -54,7 +54,7 @@
   }
 
   .name {
-    padding: 0.2em 0.6em;
+    padding: 0.2em 0.8em;
     border-radius: 2em;
     font-weight: bold;
     transition: transform 0.2s;

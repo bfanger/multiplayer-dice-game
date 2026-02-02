@@ -10,12 +10,13 @@
 
   type Props = {
     avatar: PlayerAvatar;
+    active?: boolean;
   };
 
-  let { avatar }: Props = $props();
+  let { avatar, active }: Props = $props();
 </script>
 
-<div class="avatar">
+<div class="avatar" class:active class:default={active === undefined}>
   <img
     class="image"
     src={avatars[avatar.index % avatars.length]}
@@ -30,20 +31,30 @@
     align-items: center;
     justify-content: center;
 
-    width: 4.2rem;
-    height: 4.2rem;
-    border: 0.125rem solid #0d7880;
-    border-radius: 1.3rem;
+    width: 4.2em;
+    height: 4.2em;
+    border: 0.125rem solid #0d7880aa;
+    border-radius: 1.3em;
+
+    font-size: var(--font-size, inherit);
 
     background: #fff;
+
+    &.default {
+      border-color: #0d7880;
+    }
+
+    &.active {
+      border-color: var(--color-text);
+    }
   }
 
   .image {
     display: inline-block;
 
-    width: calc(100% - 0.6rem);
-    height: calc(100% - 0.6rem);
-    border-radius: 0.9rem;
+    width: calc(100% - 0.6em);
+    height: calc(100% - 0.6em);
+    border-radius: 0.9em;
 
     object-fit: contain;
   }

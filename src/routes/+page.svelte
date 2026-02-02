@@ -38,7 +38,7 @@
         <RegisterForm />
       {:else}
         <div class="player-info">
-          <Avatar avatar={player.avatar} />
+          <Avatar avatar={player.avatar} --font-size="0.75rem" />
           <h2>{player.name}</h2>
         </div>
 
@@ -60,7 +60,11 @@
                     {/if}
                   {/each}
                 </div>
-                <Button onclick={() => joinGame(game.id)}>Meedoen</Button>
+
+                <Button onclick={() => joinGame(game.id)}>
+                  {#if game.players.find((p) => p.id === player?.id)}Terug naar
+                    spel{:else}Meedoen{/if}</Button
+                >
               </li>
             {:else}
               <p>Geen spellen actief</p>
@@ -109,5 +113,8 @@
     display: flex;
     gap: 1rem;
     align-items: center;
+
+    font-size: 1.2rem;
+    font-weight: 500;
   }
 </style>

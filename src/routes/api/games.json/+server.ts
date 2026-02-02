@@ -21,7 +21,7 @@ export const GET: RequestHandler = async () => {
   return json(
     active.map((game) => ({
       id: game.id,
-      started: game.turn === undefined,
+      started: game.turn !== undefined,
       players: game.players,
     })),
   );

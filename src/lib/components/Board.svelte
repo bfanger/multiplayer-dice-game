@@ -37,6 +37,8 @@
   import { browser } from "$app/environment";
   import Spinner from "./Spinner/Spinner.svelte";
   import Title from "./Title.svelte";
+  import { goto } from "$app/navigation";
+  import { resolve } from "$app/paths";
 
   type Props = {
     game: Game;
@@ -90,13 +92,13 @@
     return bankableDiceValues(game.dices).includes(dice.value) === false;
   }
   function onTurn(playerId: string) {
-    if (playerId === me?.id) {
+    if (playerId === me?.id && game.players.length > 1) {
       showToast("Je bent aan de beurt", 3.5);
     }
   }
   function onBust(playerId: string) {
     showToast(
-      `Helaas, geen punten voor ${playerById(game.players, playerId).name}`,
+      `Helaas, geen punten${game.players.length > 1 ? ` voor ${playerById(game.players, playerId).name}` : ""}`,
       2.5,
     );
   }
@@ -107,14 +109,12 @@
     game.chips.filter((chip) => typeof chip.playerId === "undefined"),
   );
   let scores = $derived(
-    sortBy(
-      game.players.map((player) => ({
+    game.players
+      .map((player) => ({
         ...player,
         score: totalPoints(chipStack(game.chips, player.id)),
-      })),
-      "score",
-      "desc",
-    ),
+      }))
+      .toSorted((a, b) => b.score - a.score),
   );
 </script>
 
@@ -138,7 +138,7 @@
   </div>
   <div class="players">
     {#each game.players as player (player.id)}
-      <span animate:flip>
+      <span animate:flip class:other-player={player.id !== me?.id}>
         <Player
           name={player.name}
           avatar={player.avatar}
@@ -151,16 +151,15 @@
   </div>
   {#if game.phase === "GAME-OVER"}
     <ol>
-      {#each Object.values(groupBy(scores, "score")) as rank}
+      {#each scores as player (player.id)}
         <li class="highscore">
-          {#each rank as player (player.id)}
-            <div>
-              {player.name}: <strong>{player.score}</strong> punten
-            </div>
-          {/each}
+          <div>
+            {player.name}: <strong>{player.score}</strong> punten
+          </div>
         </li>
       {/each}
     </ol>
+    <Button onclick={() => goto(resolve("/"))}>Terug naar start</Button>
   {:else}
     {@const subtotal = diceScoreSubtotal(game.dices)}
     <div class="bank">
@@ -256,6 +255,15 @@
     padding-inline: 1.2em;
   }
 
+  .players {
+    gap: 1em;
+    align-items: center;
+  }
+
+  .other-player {
+    font-size: 0.7rem;
+  }
+
   .table {
     gap: 1.2em;
     min-height: 4.5rem;
@@ -287,19 +295,25 @@
 
   .chips {
     gap: 0.6em;
+    font-size: 0.75rem;
 
-    @media (width<=600px) {
+    @media (width <= 600px) {
       gap: 0.4em;
+      font-size: 0.5rem;
+    }
+
+    @media (width <= 480px) {
+      font-size: 0.4rem;
+    }
+
+    @media (width <= 420px) {
+      font-size: 0.3rem;
     }
   }
 
-  .players {
-    gap: 1em;
-  }
-
   .highscore {
-    padding-left: 2em;
-    font-size: 2.8em;
+    padding-left: 0.2em;
+    font-size: 2em;
   }
 
   .toasts {

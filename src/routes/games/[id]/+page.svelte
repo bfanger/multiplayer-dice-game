@@ -26,7 +26,7 @@
     <div class="container">
       <Title>Laden mislukt</Title>
       <p class="message">Het opgevraagde spel bestaat niet (meer).</p>
-      <Button onclick={() => goto(resolve("/"))}>Terug naar de start</Button>
+      <Button onclick={() => goto(resolve("/"))}>Terug naar start</Button>
     </div>
   {/if}
 </Modal>

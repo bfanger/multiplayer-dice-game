@@ -35,25 +35,12 @@
     border-radius: 0.6em;
 
     font-family: "Poetsen One", sans-serif;
-    font-size: 0.75rem;
 
     appearance: none;
     background: #ebb450;
 
     &:disabled {
       cursor: not-allowed;
-    }
-
-    @media (width <= 600px) {
-      font-size: 0.5rem;
-    }
-
-    @media (width <= 480px) {
-      font-size: 0.4rem;
-    }
-
-    @media (width <= 420px) {
-      font-size: 0.3rem;
     }
   }
 
