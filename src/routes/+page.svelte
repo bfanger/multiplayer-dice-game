@@ -92,7 +92,7 @@
     align-items: center;
     justify-content: space-between;
 
-    width: 100%;
+    min-width: 100%;
     margin-top: 1.4rem;
   }
 
@@ -111,6 +111,7 @@
     gap: 0.4rem;
     align-items: center;
 
+    min-width: 100%;
     margin: 0;
     margin-top: 1rem;
     padding: 0;
@@ -122,6 +123,9 @@
     display: flex;
     gap: 1rem;
     align-items: center;
+    justify-content: space-between;
+
+    min-width: 100%;
 
     font-size: 1.2rem;
     font-weight: 500;

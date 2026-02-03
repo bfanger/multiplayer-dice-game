@@ -278,17 +278,17 @@
     min-height: 7.3rem;
     padding: 1.4em 0.5rem;
 
-    background: #085036;
+    background: #92e3e0;
   }
 
   .score {
     font-family: "Poetsen One", sans-serif;
     font-size: 3em;
-    color: #3ad36d;
+    color: #14883a;
     text-align: center;
 
     &:not(.valid) {
-      color: #e9fff0;
+      color: #930d0d;
     }
   }
 

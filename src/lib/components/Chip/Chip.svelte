@@ -39,7 +39,7 @@
     font-family: "Poetsen One", sans-serif;
 
     appearance: none;
-    background: #ebb450;
+    background: linear-gradient(170deg, #ffd847 20%, #ffb732 90%);
 
     &:disabled {
       cursor: not-allowed;
@@ -53,9 +53,9 @@
 
     width: 3.4em;
     height: 50%;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #d29b25;
 
-    color: #1c1f3b;
+    color: #4d1d06;
 
     .font {
       font-size: 1.8em;

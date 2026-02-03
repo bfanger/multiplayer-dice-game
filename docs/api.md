@@ -11,7 +11,7 @@
     - id
     - name
     - avatar
-  - Dice[] (7)
+  - Dice[] (8)
     - roll (1-6)
     - banked (bool)
   - Chip[] (16)

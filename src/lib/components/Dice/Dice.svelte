@@ -29,6 +29,7 @@
 <style>
   .dice {
     cursor: pointer;
+    user-select: none;
 
     position: relative;
 
@@ -37,14 +38,14 @@
     width: 6em;
     height: 6em;
     padding: 0;
-    border: 0.3rem outset #fffcd5;
+    border: 0.3rem outset #0178e9;
     border-radius: 1.2em;
 
     font-size: 0.75rem;
-    color: #333;
+    color: #fffefd;
 
     appearance: none;
-    background-color: #fff5d3;
+    background-color: #0178e9;
 
     &:disabled {
       cursor: not-allowed;
@@ -55,12 +56,12 @@
       pointer-events: none;
     }
 
-    &:not(:disabled):active {
-      background-color: #ffff7b;
+    &:not(:disabled):hover {
+      background-color: #0399f0;
     }
 
-    &:not(:disabled):hover {
-      background-color: #ffffb3;
+    &:not(:disabled):active {
+      background-color: #084ecf;
     }
 
     &.six {
@@ -72,8 +73,8 @@
         left: 50%;
         transform: translate(-50%, -50%);
 
-        font-size: 5em;
-        color: red;
+        font-size: 5.5em;
+        color: #1d2a83;
       }
     }
   }
