@@ -16,6 +16,36 @@
   src: url("./assets/fonts/PoetsenOne-Regular.woff2") format("woff2");
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+img {
+  display: block;
+}
+
+button,
+input {
+  font: inherit;
+}
+
 :root {
   --color-background: #95e4ff;
   --color-text: #5f3822;
@@ -24,12 +54,6 @@
   font-family: Dosis, sans-serif;
   color: var(--color-text);
   background: var(--color-background);
-}
-
-* {
-  margin: 0;
-  font-family: inherit;
-  font-size: inherit;
 }
 
 svelte-app {

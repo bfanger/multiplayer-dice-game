@@ -2,7 +2,7 @@
   import Stack from "./Stack.svelte";
   import { chipPoints } from "$lib/game-logic/chip-fns";
   import type { Chip as ChipType } from "$lib/game-logic/types";
-  import Chip from "./Chip.svelte";
+  import Chip from "./Chip/Chip.svelte";
 
   type Props = {
     chips: ChipType[];

@@ -22,7 +22,7 @@
 </script>
 
 <form class="register" onsubmit={signUp}>
-  <TextInput label="Naam" name="name" required />
+  <TextInput label="Voornaam" name="name" required />
   <Button>Verder</Button>
 </form>
 

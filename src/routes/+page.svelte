@@ -37,18 +37,18 @@
       {:else if !player}
         <RegisterForm />
       {:else}
-        <div class="player-info">
-          <Avatar avatar={player.avatar} --font-size="0.75rem" />
-          <h2>{player.name}</h2>
+        <div class="top-row">
+          <div class="player-info">
+            <Avatar avatar={player.avatar} --font-size="0.75rem" />
+            <h2>{player.name}</h2>
+          </div>
+          <Button onclick={startNewGame}>Start een spel</Button>
         </div>
 
         {#await api.get("games.json")}
           <Spinner />
         {:then games}
           <ul class="games">
-            <li>
-              <Button onclick={startNewGame}>Start een nieuw spel</Button>
-            </li>
             {#each games as game (game.id)}
               <li class="join">
                 <div>
@@ -86,14 +86,23 @@
     padding: 1rem 1.4rem;
   }
 
+  .top-row {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    margin-top: 1.4rem;
+  }
+
   .player-info {
     display: flex;
-    gap: 1rem;
+    gap: 0.8rem;
     align-items: center;
 
-    margin-top: 1.4rem;
-
-    font-size: 2rem;
+    font-size: 1.6rem;
+    font-weight: 600;
   }
 
   .games {

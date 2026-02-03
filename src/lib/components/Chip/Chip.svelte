@@ -1,4 +1,6 @@
 <script lang="ts">
+  import DiceDots from "../DiceDots.svelte";
+
   type Props = {
     value: number;
     points: number;
@@ -18,7 +20,7 @@
 
 <button class="chip" class:flipped {disabled} {onclick}>
   <div class="value"><span class="font">{value}</span></div>
-  <div class="points">{points}</div>
+  <div class="points"><DiceDots value={points} /></div>
 </button>
 
 <style>
@@ -69,9 +71,12 @@
     align-items: center;
     justify-content: center;
 
+    box-sizing: border-box;
+    width: 70%;
     height: 50%;
+    padding: 0.4em;
 
-    font-size: 2.2em;
+    font-size: 0.7em;
     color: #a03e10;
 
     .flipped & {

@@ -2,7 +2,6 @@
   /* eslint-disable @typescript-eslint/no-unsafe-call */
   import { flip } from "svelte/animate";
   import { crossfade, fade } from "svelte/transition";
-  import { sortBy, groupBy } from "lodash-es";
   import client from "$lib/client.svelte";
   import {
     chipPoints,
@@ -25,7 +24,7 @@
     Chip as ChipType,
     Dice as DiceType,
   } from "$lib/game-logic/types";
-  import Chip from "./Chip.svelte";
+  import Chip from "./Chip/Chip.svelte";
   import Dice from "./Dice/Dice.svelte";
   import Player from "./Player.svelte";
   import GameEvents from "./GameEvents.svelte";
