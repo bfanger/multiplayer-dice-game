@@ -3,11 +3,25 @@
 
   type Props = {
     value: number;
-    disabled?: boolean;
+    available?: boolean;
+    invalid?: boolean;
+    hovered?: boolean;
+    interactive?: boolean;
     onclick?: () => void;
+    onmouseenter?: () => void;
+    onmouseleave?: () => void;
   };
 
-  let { value, disabled = false, onclick }: Props = $props();
+  let {
+    value,
+    available = false,
+    invalid = false,
+    hovered = false,
+    interactive = false,
+    onclick,
+    onmouseenter,
+    onmouseleave,
+  }: Props = $props();
 </script>
 
 <button
@@ -15,9 +29,13 @@
   class:even={value % 2 === 0}
   class:odd={value % 2 === 1}
   class:six={value === 6}
-  class:inactive={!onclick}
-  {disabled}
+  class:interactive
+  class:invalid
+  class:hovered
+  class:available
   {onclick}
+  {onmouseenter}
+  {onmouseleave}
 >
   {#if value !== 6}
     <div class="dots">
@@ -28,7 +46,6 @@
 
 <style>
   .dice {
-    cursor: pointer;
     user-select: none;
 
     position: relative;
@@ -41,27 +58,38 @@
     border: 0.3rem outset #0178e9;
     border-radius: 1.2em;
 
-    font-size: 0.75rem;
+    font-size: var(--font-size, 0.75rem);
     color: #fffefd;
 
     appearance: none;
     background-color: #0178e9;
 
-    &:disabled {
+    transition: transform 0.1s;
+
+    &.invalid {
+      filter: hue-rotate(150deg);
+    }
+
+    &.interactive.available {
+      cursor: pointer;
+    }
+
+    &.interactive:not(.available) {
       cursor: not-allowed;
-      opacity: 0.6;
+      opacity: 0.9;
+
+      @media (pointer: coarse) {
+        opacity: 0.4;
+      }
     }
 
-    &.inactive {
-      pointer-events: none;
+    &.available.hovered {
+      transform: scale(1.04);
+      filter: brightness(1.1);
     }
 
-    &:not(:disabled):hover {
-      background-color: #0399f0;
-    }
-
-    &:not(:disabled):active {
-      background-color: #084ecf;
+    &.available.hovered:active {
+      filter: brightness(0.9);
     }
 
     &.six {
@@ -73,7 +101,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
 
-        font-size: 5.5em;
+        font-size: 5.2em;
         color: #1d2a83;
       }
     }

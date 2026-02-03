@@ -1,9 +1,9 @@
-# Explaining rules through gameplay
+## Explaining rules through gameplay
 
-- When clicking a dice that is already banked, highlight or shake the banked dice.
-- When hovering dice also highlight dices with same number of eyes
+- ✅ When hovering a dice that is already banked, highlight the banked dice
+- ✅ When hovering dice also highlight dices of the same type
 
-## Optimise clarity
+## Optimize clarity
 
-- Hide game elements that don't need attention,
-- When staring a game also perform the first dice roll.
+- ✅ Hide game elements that don't need attention
+- ✅ When starting a game also perform the first dice roll

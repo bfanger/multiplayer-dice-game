@@ -4,7 +4,7 @@ import { createHash } from "crypto";
 import { z } from "zod";
 
 const signupSchema = z.object({
-  name: z.string(),
+  name: z.string().max(20),
 });
 
 export const POST: RequestHandler = async ({ request }) => {

@@ -26,10 +26,9 @@
 
 <div class="player" class:active class:offline>
   <Avatar {avatar} {active} />
+  <div class="name">{name}</div>
   {#if offline}
     <div class="label">Offline</div>
-  {:else}
-    <div class="name">{name}</div>
   {/if}
   <div class="chips" title="{points} points">
     <Stack {chips} />
@@ -45,7 +44,6 @@
     align-items: center;
 
     padding: 0.25rem;
-    border-radius: 1rem;
 
     &.offline {
       opacity: 0.4;
@@ -54,9 +52,13 @@
   }
 
   .name {
+    max-width: 12ch;
     padding: 0.2em 0.8em;
-    border-radius: 2em;
+    border-radius: 1em;
+
     font-weight: bold;
+    word-break: break-all;
+
     transition: transform 0.2s;
 
     .active & {

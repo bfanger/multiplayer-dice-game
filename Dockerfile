@@ -15,6 +15,3 @@ COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/package.json /app/package.json
 
 CMD node /app/server.js
-
-# Usage:
-# docker run -rm -p 5173:5173 --env REDIS_URL=redis://host.docker.internal:6379 [image-name]

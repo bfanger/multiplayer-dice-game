@@ -7,6 +7,7 @@
     value?: string;
     required?: boolean;
     placeholder?: string;
+    maxlength?: number;
   };
   let {
     label,
@@ -15,12 +16,13 @@
     value = $bindable(),
     required,
     placeholder,
+    maxlength,
   }: Props = $props();
 </script>
 
 <div class="text-input">
   <label for={id}>{label}</label>
-  <input {type} {id} {name} bind:value {required} {placeholder} />
+  <input {type} {id} {name} bind:value {required} {placeholder} {maxlength} />
 </div>
 
 <style>

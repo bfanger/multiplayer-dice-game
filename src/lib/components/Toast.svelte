@@ -1,7 +1,7 @@
 <script lang="ts">
   import { SvelteMap } from "svelte/reactivity";
   import { slide } from "svelte/transition";
-  export type ShowToastFn = (message: string, ttl?: number) => void;
+  export type ShowToastFn = (message: string, seconds?: number) => void;
 
   type Toast = { message: string };
   type Props = {
@@ -10,12 +10,12 @@
   let { showToast = $bindable() }: Props = $props();
   const toasts = new SvelteMap<Toast, Toast>();
 
-  showToast = (message: string, ttl = 4) => {
+  showToast = (message: string, ms) => {
     const toast: Toast = { message };
     toasts.set(toast, toast);
     setTimeout(() => {
       toasts.delete(toast);
-    }, ttl * 1000);
+    }, ms);
   };
 </script>
 

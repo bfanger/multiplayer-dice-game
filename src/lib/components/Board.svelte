@@ -1,7 +1,6 @@
 <script lang="ts">
   /* eslint-disable @typescript-eslint/no-unsafe-call */
   import { flip } from "svelte/animate";
-  import { crossfade, fade } from "svelte/transition";
   import client from "$lib/client.svelte";
   import {
     chipPoints,
@@ -38,16 +37,24 @@
   import Title from "./Title.svelte";
   import { goto } from "$app/navigation";
   import { resolve } from "$app/paths";
+  import Stack from "$lib/components/Stack.svelte";
+  import { fly } from "svelte/transition";
 
   type Props = {
     game: Game;
     me?: PlayerType;
   };
   let { game, me }: Props = $props();
+  let hoveredDice = $state<number>();
 
   let showToast = $state<ShowToastFn>(() => undefined);
 
-  const [receive, send] = crossfade({ fallback: (node) => fade(node) });
+  let hoverMultiplier = $derived(hoveredDice === 6 ? 5 : (hoveredDice ?? 0));
+  let scoreDelta = $derived(
+    game.dices.filter((d) => d.value === hoveredDice && !diceDisabled(d))
+      .length * hoverMultiplier,
+  );
+
   function chipDisabled(chip: ChipType) {
     if (game.phase !== "BANKED") {
       return true;
@@ -92,7 +99,7 @@
   }
   function onTurn(playerId: string) {
     if (playerId === me?.id && game.players.length > 1) {
-      showToast("Je bent aan de beurt", 3.5);
+      showToast("Je bent aan de beurt", 3500);
     }
   }
   function onBust(playerId: string) {
@@ -104,9 +111,6 @@
   async function joinGame() {
     await client.joinGame(game.id);
   }
-  let chips = $derived(
-    game.chips.filter((chip) => typeof chip.playerId === "undefined"),
-  );
   let scores = $derived(
     game.players
       .map((player) => ({
@@ -123,38 +127,49 @@
 
 <main class="rows">
   <div class="chips">
-    {#each chips as chip (game.chips.indexOf(chip))}
-      <span animate:flip={{ duration: 300 }}>
-        <Chip
-          value={chip.value}
-          points={chipPoints(chip)}
-          flipped={!!chip.disabled}
-          disabled={chipDisabled(chip)}
-          onclick={() => client.steal(game.id, game.chips.indexOf(chip))}
-        />
+    {#each game.chips as chip}
+      <span>
+        {#if chip.playerId === undefined && !chip.disabled}
+          <Chip
+            value={chip.value}
+            points={chipPoints(chip)}
+            disabled={chipDisabled(chip)}
+            onclick={() => client.steal(game.id, game.chips.indexOf(chip))}
+          />
+        {/if}
       </span>
     {/each}
   </div>
-  <div class="players">
-    {#each game.players as player (player.id)}
-      <span animate:flip class:other-player={player.id !== me?.id}>
-        <Player
-          name={player.name}
-          avatar={player.avatar}
-          active={player.id === game.turn}
-          offline={!player.connected}
-          chips={chipStack(game.chips, player.id)}
-        />
-      </span>
-    {/each}
-  </div>
-  {#if game.phase === "GAME-OVER"}
+  {#if game.players.length === 1}
+    <div class="solo-stack">
+      <Stack chips={chipStack(game.chips, game.players[0].id)} />
+    </div>
+  {:else}
+    <div class="players">
+      {#each game.players as player (player.id)}
+        <span animate:flip class:other-player={player.id !== me?.id}>
+          <Player
+            name={player.name}
+            avatar={player.avatar}
+            active={player.id === game.turn}
+            offline={!player.connected}
+            chips={chipStack(game.chips, player.id)}
+          />
+        </span>
+      {/each}
+    </div>
+  {/if}
+  {#if !game.turn}
+    {#if me && hasHostAccess(game, me)}
+      <Button onclick={() => client.startGame(game.id)}>Start spel</Button>
+    {:else}
+      <p class="muted">Wacht totdat het spel wordt gestart...</p>
+    {/if}
+  {:else if game.phase === "GAME-OVER"}
     <ol>
       {#each scores as player (player.id)}
         <li class="highscore">
-          <div>
-            {player.name}: <strong>{player.score}</strong> punten
-          </div>
+          {player.name}: <strong>{player.score}</strong> punten
         </li>
       {/each}
     </ol>
@@ -163,46 +178,53 @@
     {@const subtotal = diceScoreSubtotal(game.dices)}
     <div class="bank">
       {#each bankedDice(game.dices) as dice (game.dices.indexOf(dice))}
-        <span
-          in:receive={{ key: `dice${game.dices.indexOf(dice)}` }}
-          out:send={{ key: `dice${game.dices.indexOf(dice)}` }}
-          animate:flip={{ duration: 200 }}
-        >
-          <Dice value={dice.value} />
+        <span animate:flip={{ duration: 200 }}>
+          <Dice value={dice.value} invalid={hoveredDice === dice.value} />
         </span>
       {/each}
-      {#if subtotal > 0}
-        <span
+      {#if subtotal > 0 && game.phase !== "NEW-TURN"}
+        <div
           class="score"
-          class:valid={diceScoreValid(game.dices) && game.phase !== "NEW-TURN"}
+          class:valid={diceScoreValid(game.dices) && subtotal >= 21}
         >
           {subtotal}
-        </span>
+          {#if scoreDelta > 0}
+            <div transition:fly={{ duration: 150, y: -5 }} class="score-delta">
+              + {scoreDelta}
+            </div>
+          {/if}
+        </div>
       {/if}
     </div>
     <div class="table">
       {#each thrownDice(game.dices) as dice (game.dices.indexOf(dice))}
-        <span
-          animate:flip={{ duration: 200 }}
-          in:receive={{ key: `dice${game.dices.indexOf(dice)}` }}
-          out:send={{ key: `dice${game.dices.indexOf(dice)}` }}
-        >
-          <Dice
-            value={dice.value}
-            disabled={diceDisabled(dice)}
-            onclick={() => client.bankValue(game.id, dice.value)}
-          />
-        </span>
+        {@const available = !diceDisabled(dice)}
+        <Dice
+          value={dice.value}
+          {available}
+          hovered={hoveredDice === dice.value}
+          interactive
+          onclick={() => {
+            if (available) {
+              void client.bankValue(game.id, dice.value);
+              hoveredDice = undefined;
+            } else if (game.turn === me?.id && game.phase === "THROWN") {
+              showToast("Dit type dobbelstenen is al gebruikt", 1000);
+            }
+          }}
+          onmouseenter={() => {
+            if (game.phase === "THROWN") {
+              hoveredDice = dice.value;
+            }
+          }}
+          onmouseleave={() => {
+            hoveredDice = undefined;
+          }}
+        />
       {/each}
     </div>
     <div class="actions">
-      {#if !game.turn}
-        {#if me && hasHostAccess(game, me)}
-          <Button onclick={() => client.startGame(game.id)}>Start spel</Button>
-        {:else}
-          <p class="muted">Wacht todat het spel gestart wordt...</p>
-        {/if}
-      {:else if game.turn !== me?.id}
+      {#if game.turn !== me?.id}
         {#if me}
           {#if game.players.find((p) => p.id === me?.id)}
             <p class="muted">Wachten op andere spelers</p>
@@ -245,13 +267,17 @@
     padding-block: 1.2em;
   }
 
-  .table,
   .chips,
   .bank,
   .players {
     display: flex;
     flex-wrap: wrap;
     padding-inline: 1.2em;
+  }
+
+  .solo-stack {
+    min-height: 6rem;
+    font-size: 0.5rem;
   }
 
   .players {
@@ -264,13 +290,18 @@
   }
 
   .table {
-    gap: 1.2em;
-    min-height: 4.5rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6rem;
+    min-height: 9.6rem;
   }
 
   .bank {
+    --font-size: 0.6em;
+
     display: flex;
-    gap: 1em;
+    gap: 0.5rem;
+    align-items: center;
     justify-content: center;
 
     box-sizing: border-box;
@@ -279,35 +310,64 @@
     padding: 1.4em 0.5rem;
 
     background: #92e3e0;
+
+    @media (width <= 600px) {
+      --font-size: 0.4em;
+    }
   }
 
   .score {
+    position: relative;
+
+    margin-left: 0.4em;
+
     font-family: "Poetsen One", sans-serif;
     font-size: 3em;
+    line-height: 1;
     color: #14883a;
     text-align: center;
+    white-space: nowrap;
 
     &:not(.valid) {
       color: #930d0d;
     }
   }
 
+  .score-delta {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, 0);
+
+    padding: 0.1rem 0.5rem;
+    border-radius: 2rem;
+
+    font:
+      600 1.2rem Dosis,
+      sans-serif;
+    color: #5a615b;
+
+    background: white;
+  }
+
   .chips {
-    gap: 0.6em;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0.6rem;
     font-size: 0.75rem;
 
     @media (width <= 600px) {
-      gap: 0.4em;
-      font-size: 0.5rem;
+      gap: 0.5rem;
+      font-size: 0.6rem;
     }
 
-    @media (width <= 480px) {
-      font-size: 0.4rem;
+    @media (width < 390px) {
+      grid-template-columns: repeat(6, 1fr);
     }
+  }
 
-    @media (width <= 420px) {
-      font-size: 0.3rem;
-    }
+  ol {
+    padding-inline: 2rem;
   }
 
   .highscore {
@@ -328,6 +388,8 @@
   }
 
   .muted {
+    font-size: 1rem;
+    font-weight: 600;
     opacity: 0.5;
   }
 

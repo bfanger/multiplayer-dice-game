@@ -22,7 +22,7 @@
 </script>
 
 <form class="register" onsubmit={signUp}>
-  <TextInput label="Voornaam" name="name" required />
+  <TextInput label="Voornaam" name="name" required maxlength={20} />
   <Button>Verder</Button>
 </form>
 

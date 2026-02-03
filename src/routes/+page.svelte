@@ -62,12 +62,13 @@
                 </div>
 
                 <Button onclick={() => joinGame(game.id)}>
-                  {#if game.players.find((p) => p.id === player?.id)}Terug naar
-                    spel{:else}Meedoen{/if}</Button
-                >
+                  {#if game.players.find((p) => p.id === player?.id)}
+                    Verder spelen
+                  {:else}
+                    Meedoen
+                  {/if}
+                </Button>
               </li>
-            {:else}
-              <p>Geen spellen actief</p>
             {/each}
           </ul>
         {/await}
