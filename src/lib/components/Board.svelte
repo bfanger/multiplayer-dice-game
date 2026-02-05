@@ -39,6 +39,8 @@
   import { resolve } from "$app/paths";
   import Stack from "$lib/components/Stack.svelte";
   import { fly } from "svelte/transition";
+  import { page } from "$app/state";
+  import DiceTray from "./DiceTray.svelte";
 
   type Props = {
     game: Game;
@@ -51,8 +53,7 @@
 
   let hoverMultiplier = $derived(hoveredDice === 6 ? 5 : (hoveredDice ?? 0));
   let scoreDelta = $derived(
-    game.dices.filter((d) => d.value === hoveredDice && !diceDisabled(d))
-      .length * hoverMultiplier,
+    game.dices.filter((d) => d.value === hoveredDice).length * hoverMultiplier,
   );
 
   function chipDisabled(chip: ChipType) {
@@ -88,15 +89,7 @@
     }
     return subtitle;
   }
-  function diceDisabled(dice: DiceType) {
-    if (game.turn !== me?.id) {
-      return true;
-    }
-    if (game.phase !== "THROWN") {
-      return true;
-    }
-    return bankableDiceValues(game.dices).includes(dice.value) === false;
-  }
+
   function onTurn(playerId: string) {
     if (playerId === me?.id && game.players.length > 1) {
       showToast("Je bent aan de beurt", 3500);
@@ -119,6 +112,17 @@
       }))
       .toSorted((a, b) => b.score - a.score),
   );
+  function selectDice(dice: DiceType) {
+    if (game.turn !== me?.id || game.phase !== "THROWN") {
+      return;
+    }
+    if (bankableDiceValues(game.dices).includes(dice.value)) {
+      void client.bankValue(game.id, dice.value);
+      hoveredDice = undefined;
+    } else {
+      showToast("Dit type dobbelstenen is al gebruikt", 1000);
+    }
+  }
 </script>
 
 <svelte:head>
@@ -140,14 +144,14 @@
       </span>
     {/each}
   </div>
-  {#if game.players.length === 1}
+  {#if game.players.length === 1 && game.turn}
     <div class="solo-stack">
       <Stack chips={chipStack(game.chips, game.players[0].id)} />
     </div>
   {:else}
     <div class="players">
       {#each game.players as player (player.id)}
-        <span animate:flip class:other-player={player.id !== me?.id}>
+        <span class:other-player={player.id !== me?.id}>
           <Player
             name={player.name}
             avatar={player.avatar}
@@ -161,7 +165,25 @@
   {/if}
   {#if !game.turn}
     {#if me && hasHostAccess(game, me)}
+      {#if browser && typeof navigator.share === "function"}
+        <Button
+          onclick={() => {
+            void navigator.share({
+              title: "Samen dobbelen",
+              text: "Doe je mee?",
+              url: page.url.toString(),
+            });
+          }}
+        >
+          Nodig anderen uit
+        </Button>
+      {/if}
       <Button onclick={() => client.startGame(game.id)}>Start spel</Button>
+    {:else if !me && browser}
+      <div>
+        <Title>Meedoen?</Title>
+        <RegisterForm onregistered={joinGame} />
+      </div>
     {:else}
       <p class="muted">Wacht totdat het spel wordt gestart...</p>
     {/if}
@@ -196,33 +218,7 @@
         </div>
       {/if}
     </div>
-    <div class="table">
-      {#each thrownDice(game.dices) as dice (game.dices.indexOf(dice))}
-        {@const available = !diceDisabled(dice)}
-        <Dice
-          value={dice.value}
-          {available}
-          hovered={hoveredDice === dice.value}
-          interactive
-          onclick={() => {
-            if (available) {
-              void client.bankValue(game.id, dice.value);
-              hoveredDice = undefined;
-            } else if (game.turn === me?.id && game.phase === "THROWN") {
-              showToast("Dit type dobbelstenen is al gebruikt", 1000);
-            }
-          }}
-          onmouseenter={() => {
-            if (game.phase === "THROWN") {
-              hoveredDice = dice.value;
-            }
-          }}
-          onmouseleave={() => {
-            hoveredDice = undefined;
-          }}
-        />
-      {/each}
-    </div>
+    <DiceTray {game} {hoveredDice} onclick={selectDice} />
     <div class="actions">
       {#if game.turn !== me?.id}
         {#if me}
@@ -287,13 +283,6 @@
 
   .other-player {
     font-size: 0.7rem;
-  }
-
-  .table {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0.6rem;
-    min-height: 9.6rem;
   }
 
   .bank {

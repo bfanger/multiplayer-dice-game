@@ -7,6 +7,7 @@ services:
   app:
     build: .
     stop_grace_period: 1s
+    restart: unless-stopped
     environment:
       - NODE_ENV=production
       - REDIS_URL=redis://redis:6379
@@ -17,11 +18,15 @@ services:
 
   redis:
     image: "redis:8-alpine"
+    restart: unless-stopped
     volumes:
       - redis-data:/data
 
   caddy:
     image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
     ports:
       - "80:80"
       - "443:443"
