@@ -10,7 +10,7 @@ describe("game-fns", () => {
       expect(twoPlayerGame.turn).toBeUndefined();
       const startedGame = startGame(twoPlayerGame);
       expect(typeof startedGame.turn).toBe("string");
-      expect(startedGame.phase).toBe("NEW-TURN");
+      expect(startedGame.phase).toBe("NEW-TURN-SUCCESS");
     });
   });
 

@@ -98,7 +98,7 @@
   function onBust(playerId: string) {
     showToast(
       `Helaas, geen punten${game.players.length > 1 ? ` voor ${playerById(game.players, playerId).name}` : ""}`,
-      2.5,
+      2500,
     );
   }
   async function joinGame() {
@@ -145,8 +145,14 @@
     {/each}
   </div>
   {#if game.players.length === 1 && game.turn}
+    {@const stack = chipStack(game.chips, game.players[0].id)}
+    {@const total = totalPoints(stack)}
     <div class="solo-stack">
-      <Stack chips={chipStack(game.chips, game.players[0].id)} />
+      <Stack chips={stack} />
+      <div class="solo-points">
+        {total}
+        {#if total === 1}punt{:else}punten{/if}
+      </div>
     </div>
   {:else}
     <div class="players">
@@ -198,13 +204,13 @@
     <Button onclick={() => goto(resolve("/"))}>Terug naar start</Button>
   {:else}
     {@const subtotal = diceScoreSubtotal(game.dices)}
-    <div class="bank">
+    <div class="bank" class:bust={game.phase === "NEW-TURN-BUST"}>
       {#each bankedDice(game.dices) as dice (game.dices.indexOf(dice))}
         <span animate:flip={{ duration: 200 }}>
           <Dice value={dice.value} invalid={hoveredDice === dice.value} />
         </span>
       {/each}
-      {#if subtotal > 0 && game.phase !== "NEW-TURN"}
+      {#if subtotal > 0 && game.phase !== "NEW-TURN-BUST"}
         <div
           class="score"
           class:valid={diceScoreValid(game.dices) && subtotal >= 21}
@@ -236,9 +242,9 @@
       {:else if game.turn === me?.id}
         {#if game.phase === "THROWN"}
           Selecteer dobbelstenen
-        {:else if game.phase === "NEW-TURN" || thrownDice(game.dices).length > 0}
-          <Button onclick={() => client.throwDice(game.id)}
-            >Gooi dobbelstenen
+        {:else if game.phase === "NEW-TURN-SUCCESS" || game.phase === "NEW-TURN-BUST" || thrownDice(game.dices).length > 0}
+          <Button onclick={() => client.throwDice(game.id)}>
+            Gooi dobbelstenen
           </Button>
         {:else}
           Selecteer een chip
@@ -272,8 +278,18 @@
   }
 
   .solo-stack {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+
     min-height: 6rem;
+
     font-size: 0.5rem;
+  }
+
+  .solo-points {
+    font-size: 1rem;
+    font-weight: 600;
   }
 
   .players {
@@ -299,6 +315,10 @@
     padding: 1.4em 0.5rem;
 
     background: #92e3e0;
+
+    &.bust {
+      background: #f5b0b0;
+    }
 
     @media (width <= 600px) {
       --font-size: 0.4em;

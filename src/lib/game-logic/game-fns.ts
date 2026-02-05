@@ -18,7 +18,7 @@ import {
 export function createGame(): Game {
   return {
     id: uuid(),
-    phase: "NEW-TURN",
+    phase: "NEW-TURN-SUCCESS",
     players: [],
     dices: Array(8)
       .fill(null)
@@ -44,7 +44,7 @@ export function startGame(game: Game): Game {
   }
   return {
     ...game,
-    phase: "NEW-TURN",
+    phase: "NEW-TURN-SUCCESS",
     players,
     turn: players[0].id,
   };
@@ -125,7 +125,7 @@ export function lostTurn(game: Game): Game {
   const gameOver = allChipsTaken(chips);
   return {
     ...game,
-    phase: gameOver ? "GAME-OVER" : "NEW-TURN",
+    phase: gameOver ? "GAME-OVER" : "NEW-TURN-BUST",
     turn: gameOver ? undefined : nextPlayerId(game),
     chips,
   };
@@ -139,7 +139,7 @@ export function throwDiceInGame(game: Game): Game {
     throw new Error("Game over");
   }
   let dices: Dice[];
-  if (game.phase === "NEW-TURN") {
+  if (game.phase === "NEW-TURN-SUCCESS" || game.phase === "NEW-TURN-BUST") {
     dices = game.dices.map(() => rollDice());
   } else {
     let rolled = false;
@@ -224,7 +224,7 @@ export function stealChip(game: Game, chipIndex: number): Game {
   return {
     ...game,
     chips,
-    phase: allChipsTaken(chips) ? "GAME-OVER" : "NEW-TURN",
+    phase: allChipsTaken(chips) ? "GAME-OVER" : "NEW-TURN-SUCCESS",
     turn: nextPlayerId(game),
   };
 }
@@ -248,7 +248,11 @@ export function gameEvents(next: Game, previous: Game): GameEvent[] {
     return []; // @todo emit detect player updates?
   }
 
-  if (next.phase === "NEW-TURN" || next.phase === "GAME-OVER") {
+  if (
+    next.phase === "NEW-TURN-SUCCESS" ||
+    next.phase === "NEW-TURN-BUST" ||
+    next.phase === "GAME-OVER"
+  ) {
     if (typeof previous.turn === "undefined") {
       throw new Error("Unexpected event, non player action?");
     }
@@ -262,10 +266,7 @@ export function gameEvents(next: Game, previous: Game): GameEvent[] {
         playerId: next.turn,
       };
     }
-    // does'nt work in single player
-    const chipsThen = chipStack(previous.chips, previous.turn).length;
-    const chipsNow = chipStack(next.chips, previous.turn).length;
-    if (chipsNow === 0 || chipsThen > chipsNow) {
+    if (next.phase === "NEW-TURN-BUST") {
       return [
         {
           type: "bust",

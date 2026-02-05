@@ -18,9 +18,9 @@
       .map((_, i) => i),
   );
   let rotations = $state(Array(8).fill(0));
-
   $effect(() => {
-    if (game.phase === "THROWN") {
+    if (game.phase === "THROWN" || game.phase === "NEW-TURN-BUST") {
+      // Trigger CSS animation
       roll = false;
       void tick().then(() => {
         indexes = shuffle(indexes);
@@ -34,24 +34,26 @@
 <div class="dice-tray">
   {#each game.dices as _, i (game.dices.indexOf(_))}
     {@const dice = game.dices[indexes[i]]}
-    <div class:roll style:--rotation="{rotations[i]}deg">
-      {#if !dice.banked}
-        <Dice
-          value={dice.value}
-          available={game.phase === "THROWN" &&
-            bankableDiceValues(game.dices).includes(dice.value)}
-          hovered={hoveredDice === dice.value}
-          interactive
-          onclick={() => onclick(dice)}
-          onmouseenter={() => {
-            if (game.phase === "THROWN") {
-              hoveredDice = dice.value;
-            }
-          }}
-          onmouseleave={() => {
-            hoveredDice = undefined;
-          }}
-        />
+    <div>
+      {#if !dice.banked && game.phase !== "NEW-TURN-SUCCESS"}
+        <div class:roll style:--rotation="{rotations[i]}deg">
+          <Dice
+            value={dice.value}
+            available={game.phase === "THROWN" &&
+              bankableDiceValues(game.dices).includes(dice.value)}
+            hovered={hoveredDice === dice.value}
+            interactive
+            onclick={() => onclick(dice)}
+            onmouseenter={() => {
+              if (game.phase === "THROWN") {
+                hoveredDice = dice.value;
+              }
+            }}
+            onmouseleave={() => {
+              hoveredDice = undefined;
+            }}
+          />
+        </div>
       {/if}
     </div>
   {/each}
@@ -65,6 +67,7 @@
     gap: 0.6rem;
 
     min-height: 9.6rem;
+    padding-block: 0.6rem;
   }
 
   @property --rotation {
@@ -114,15 +117,18 @@
 
   @keyframes dice-roll {
     0% {
+      transform: translate(-20px, 10px);
       rotate: -10deg;
-      opacity: 0;
-    }
-
-    10% {
+      scale: 0.8;
       opacity: 1;
     }
 
+    10% {
+      scale: 1;
+    }
+
     100% {
+      transform: translate(0, 0);
       rotate: var(--rotation);
       opacity: 1;
     }
