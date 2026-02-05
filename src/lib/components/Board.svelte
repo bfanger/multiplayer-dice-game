@@ -224,7 +224,7 @@
         </div>
       {/if}
     </div>
-    <DiceTray {game} {hoveredDice} onclick={selectDice} />
+    <DiceTray {game} bind:hoveredDice onclick={selectDice} />
     <div class="actions">
       {#if game.turn !== me?.id}
         {#if me}
