@@ -11,6 +11,7 @@
   import {
     bankableDiceValues,
     bankedDice,
+    bankedDiceValues,
     diceScoreSubtotal,
     diceScoreTotal,
     diceScoreValid,
@@ -51,7 +52,15 @@
 
   let showToast = $state<ShowToastFn>(() => undefined);
 
-  let hoverMultiplier = $derived(hoveredDice === 6 ? 5 : (hoveredDice ?? 0));
+  let hoverMultiplier = $derived.by(() => {
+    if (!hoveredDice || bankedDiceValues(game.dices).includes(hoveredDice)) {
+      return 0;
+    }
+    if (hoveredDice === 6) {
+      return 5;
+    }
+    return hoveredDice;
+  });
   let scoreDelta = $derived(
     game.dices.filter((d) => d.value === hoveredDice).length * hoverMultiplier,
   );
