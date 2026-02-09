@@ -14,4 +14,7 @@ COPY --from=build /app/server.js /app/server.js
 COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/package.json /app/package.json
 
-CMD node /app/server.js
+USER www-data
+
+EXPOSE 8080
+CMD ["node", "/app/server.js"]
