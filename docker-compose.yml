@@ -32,3 +32,4 @@ services:
       - ./caddy:/etc/caddy/
       - caddy_data:/data
       - caddy_config:/config
+      - ./static/lego:/lego
