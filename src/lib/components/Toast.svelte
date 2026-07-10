@@ -7,9 +7,11 @@
   type Props = {
     showToast: ShowToastFn;
   };
+  // eslint-disable-next-line no-useless-assignment
   let { showToast = $bindable() }: Props = $props();
   const toasts = new SvelteMap<Toast, Toast>();
 
+  // eslint-disable-next-line no-useless-assignment
   showToast = (message: string, ms) => {
     const toast: Toast = { message };
     toasts.set(toast, toast);

@@ -2,11 +2,7 @@ export type Game = {
   id: string;
   turn?: string; // playerId
   phase:
-    | "THROWN"
-    | "BANKED"
-    | "NEW-TURN-SUCCESS"
-    | "NEW-TURN-BUST"
-    | "GAME-OVER";
+    "THROWN" | "BANKED" | "NEW-TURN-SUCCESS" | "NEW-TURN-BUST" | "GAME-OVER";
   players: Player[];
   dices: Dice[];
   chips: Chip[];

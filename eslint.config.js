@@ -11,6 +11,7 @@ export default defineConfig(
   {
     ignores: [
       ".svelte-kit",
+      ".pnpm-store",
       ".vercel",
       "build",
       "dist",

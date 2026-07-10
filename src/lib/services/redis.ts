@@ -54,7 +54,7 @@ async function all<T>(query: string): Promise<T[]> {
   await autoConnect();
   const keys = await client.keys(query);
   const values = await Promise.all(keys.map((key) => get<T>(key)));
-  return values.filter((value) => typeof value !== "undefined") as T[];
+  return values.filter((value) => typeof value !== "undefined");
 }
 function subscribe<T>(
   channel: string,

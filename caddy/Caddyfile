@@ -1,10 +1,6 @@
 dice-game.bfanger.nl {
 	reverse_proxy app:8080
 }
-lego.bfanger.nl {
-	root /lego
-	file_server
-}
 :80 {
 	reverse_proxy app:8080
 }
