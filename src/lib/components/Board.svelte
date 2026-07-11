@@ -2,26 +2,19 @@
   /* eslint-disable @typescript-eslint/no-unsafe-call */
   import { flip } from "svelte/animate";
   import client from "$lib/client.svelte";
-  import {
-    chipPoints,
-    chipStack,
-    chipStealable,
-    totalPoints,
-  } from "$lib/game-logic/chip-fns";
+  import { chipPoints, chipStack, totalPoints } from "$lib/game-logic/chip-fns";
   import {
     bankableDiceValues,
     bankedDice,
     bankedDiceValues,
     diceScoreSubtotal,
-    diceScoreTotal,
     diceScoreValid,
     thrownDice,
   } from "$lib/game-logic/dice-fns";
-  import { hasHostAccess } from "$lib/game-logic/game-fns";
+  import { chipDisabled, hasHostAccess } from "$lib/game-logic/game-fns";
   import type {
     Game,
     Player as PlayerType,
-    Chip as ChipType,
     Dice as DiceType,
   } from "$lib/game-logic/types";
   import Chip from "./Chip/Chip.svelte";
@@ -65,25 +58,6 @@
     game.dices.filter((d) => d.value === hoveredDice).length * hoverMultiplier,
   );
 
-  function chipDisabled(chip: ChipType) {
-    if (game.phase !== "BANKED") {
-      return true;
-    }
-    if (!me) {
-      return true;
-    }
-    if (game.turn !== me.id) {
-      return true;
-    }
-    return (
-      chipStealable(
-        game.chips,
-        me.id,
-        diceScoreTotal(game.dices),
-        game.chips.indexOf(chip),
-      ) === false
-    );
-  }
   function getTitle() {
     if (!game.turn) {
       return "Wachten op spelers...";
@@ -146,7 +120,7 @@
           <Chip
             value={chip.value}
             points={chipPoints(chip)}
-            disabled={chipDisabled(chip)}
+            disabled={chipDisabled(game, me, chip)}
             onclick={() => client.steal(game.id, game.chips.indexOf(chip))}
           />
         {/if}
@@ -157,7 +131,7 @@
     {@const stack = chipStack(game.chips, game.players[0].id)}
     {@const total = totalPoints(stack)}
     <div class="solo-stack">
-      <Stack chips={stack} />
+      <Stack {game} {me} chips={stack} />
       <div class="solo-points">
         {total}
         {#if total === 1}punt{:else}punten{/if}
@@ -173,6 +147,8 @@
             active={player.id === game.turn}
             offline={!player.connected}
             chips={chipStack(game.chips, player.id)}
+            {game}
+            {me}
           />
         </span>
       {/each}
@@ -246,7 +222,7 @@
           <Title>Meedoen?</Title>
           <RegisterForm onregistered={joinGame} />
         {:else}
-          <Spinner />
+          <Spinner height="2.6rem" />
         {/if}
       {:else if game.turn === me?.id}
         {#if game.phase === "THROWN"}

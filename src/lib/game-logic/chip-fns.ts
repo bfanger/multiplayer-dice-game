@@ -18,7 +18,6 @@ export function chipPoints(chip: Chip): number {
   }
   return 1;
 }
-
 export function chipStack(chips: Chip[], playerId: string): Chip[] {
   return orderBy(
     chips.filter((chip) => chip.playerId === playerId),
@@ -63,7 +62,11 @@ export function chipStealable(
   score: number,
   chipIndex: number,
 ): boolean {
-  return chipStealError(chips, playerId, score, chipIndex) === null;
+  const err = chipStealError(chips, playerId, score, chipIndex);
+  if (err) {
+    console.log(chips[chipIndex]?.value, err);
+  }
+  return err === null;
 }
 
 export function allChipsTaken(chips: Chip[]): boolean {

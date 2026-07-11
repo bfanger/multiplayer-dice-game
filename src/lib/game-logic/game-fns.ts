@@ -279,3 +279,24 @@ export function gameEvents(next: Game, previous: Game): GameEvent[] {
   }
   return [];
 }
+
+export function chipDisabled(game: Game, me: Player | undefined, chip: Chip) {
+  if (game.phase !== "BANKED") {
+    return true;
+  }
+  if (!me) {
+    return true;
+  }
+  if (game.turn !== me.id) {
+    return true;
+  }
+
+  return (
+    chipStealable(
+      game.chips,
+      me.id,
+      diceScoreTotal(game.dices),
+      game.chips.indexOf(chip),
+    ) === false
+  );
+}

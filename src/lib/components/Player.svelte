@@ -1,7 +1,7 @@
 <script lang="ts">
   import { totalPoints } from "$lib/game-logic/chip-fns";
 
-  import type { Chip as ChipType, PlayerAvatar } from "$lib/game-logic/types";
+  import type { Chip as ChipType, Game, Player as PlayerType, PlayerAvatar } from "$lib/game-logic/types";
   import Avatar from "./Avatar/Avatar.svelte";
   import Stack from "./Stack.svelte";
 
@@ -11,6 +11,8 @@
     active?: boolean;
     offline?: boolean;
     chips?: ChipType[];
+    game: Game;
+    me?: PlayerType;
   };
 
   let {
@@ -19,6 +21,8 @@
     active = false,
     offline = false,
     chips = [],
+    game,
+    me,
   }: Props = $props();
 
   let points = $derived(totalPoints(chips));
@@ -31,7 +35,7 @@
     <div class="label">Offline</div>
   {/if}
   <div class="chips" title="{points} points">
-    <Stack {chips} />
+    <Stack {game} {me} {chips} />
   </div>
 </div>
 

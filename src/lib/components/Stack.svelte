@@ -1,14 +1,18 @@
 <script lang="ts">
   import Stack from "./Stack.svelte";
   import { chipPoints } from "$lib/game-logic/chip-fns";
-  import type { Chip as ChipType } from "$lib/game-logic/types";
+  import type { Chip as ChipType, Game, Player } from "$lib/game-logic/types";
   import Chip from "./Chip/Chip.svelte";
+  import { chipDisabled } from "$lib/game-logic/game-fns";
+  import client from "$lib/client.svelte";
 
   type Props = {
+    game: Game;
+    me: Player | undefined;
     chips: ChipType[];
   };
 
-  let { chips }: Props = $props();
+  let { chips, game, me }: Props = $props();
 
   let chip = $derived(chips[0]);
   let stacked = $derived(chips.slice(1));
@@ -16,11 +20,16 @@
 
 <div class="stack">
   {#if chip}
-    <Chip value={chip.value} points={chipPoints(chip)} />
+    <Chip
+      value={chip.value}
+      points={chipPoints(chip)}
+      disabled={chipDisabled(game, me, chip)}
+      onclick={() => client.steal(game.id, game.chips.indexOf(chip))}
+    />
   {/if}
   {#if stacked.length > 0}
     <div class="nested">
-      <Stack chips={stacked} />
+      <Stack {game} {me} chips={stacked} />
     </div>
   {/if}
 </div>

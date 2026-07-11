@@ -1,7 +1,11 @@
 <script lang="ts">
+  type Props = {
+    height?: string;
+  };
+  let { height }: Props = $props();
 </script>
 
-<div class="spinner" title="Bezig met laden...">
+<div class="spinner" title="Bezig met laden..." style:height>
   <div class="dot"></div>
   <div class="dot"></div>
   <div class="dot"></div>

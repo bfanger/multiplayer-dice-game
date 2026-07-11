@@ -41,10 +41,16 @@
     appearance: none;
     background: linear-gradient(170deg, #ffd847 20%, #ffb732 90%);
 
+    transition: 0.1s scale;
+
     &:disabled {
       cursor: not-allowed;
-      opacity: 0.8;
       filter: grayscale(80%);
+    }
+
+    &:not(:disabled):hover {
+      scale: 1.05;
+      filter: saturate(125%);
     }
   }
 

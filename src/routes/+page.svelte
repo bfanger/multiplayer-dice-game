@@ -30,11 +30,9 @@
   <div class="container">
     <Title>Samen dobbelen</Title>
     {#await client.maybePlayer()}
-      <Spinner />
+      <Spinner height="9.875rem" />
     {:then player}
-      {#if !browser}
-        <Spinner />
-      {:else if !player}
+      {#if !player}
         <RegisterForm />
       {:else}
         <div class="top-row">

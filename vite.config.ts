@@ -1,13 +1,24 @@
 import { sveltekit } from "@sveltejs/kit/vite";
 import devtoolsJson from "vite-plugin-devtools-json";
 import { defineConfig } from "vitest/config";
+import { FontaineTransform } from "fontaine";
 import { Server } from "socket.io";
 import type { Server as HttpServer } from "http";
 
 export default defineConfig({
+  server: {
+    watch: {
+      usePolling: true,
+    },
+  },
   plugins: [
     devtoolsJson(),
     sveltekit(),
+    FontaineTransform.vite({
+      fallbacks: {
+        "Poetsen One": ["Arial", "sans-serif"],
+      },
+    }),
     {
       name: "multiplayer",
       configureServer(server) {
