@@ -62,11 +62,7 @@ export function chipStealable(
   score: number,
   chipIndex: number,
 ): boolean {
-  const err = chipStealError(chips, playerId, score, chipIndex);
-  if (err) {
-    console.log(chips[chipIndex]?.value, err);
-  }
-  return err === null;
+  return chipStealError(chips, playerId, score, chipIndex) === null;
 }
 
 export function allChipsTaken(chips: Chip[]): boolean {

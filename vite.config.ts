@@ -1,3 +1,4 @@
+import { varlockVitePlugin } from "@varlock/vite-integration";
 import { sveltekit } from "@sveltejs/kit/vite";
 import devtoolsJson from "vite-plugin-devtools-json";
 import { defineConfig } from "vitest/config";
@@ -12,6 +13,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    varlockVitePlugin(),
     devtoolsJson(),
     sveltekit(),
     FontaineTransform.vite({
