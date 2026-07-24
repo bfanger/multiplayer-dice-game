@@ -10,7 +10,7 @@ export const POST: RequestHandler = async (e) => {
   void publishGame(after);
   void redis.increment("throws_total");
   if (["GAME-OVER", "NEW-TURN-BUST"].includes(after.phase)) {
-    void redis.increment("turn_bust_total");
+    void redis.increment("busts_total");
   }
   return emptyResponse();
 };

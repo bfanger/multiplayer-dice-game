@@ -1,12 +1,13 @@
 import redis from "$lib/services/redis";
 
 const metrics = {
-  throws_total: "Total number of dice throws",
-  turn_bust_total: "Total number of busted turns",
-  banked_total: "Total number of times points were banked",
-  steals_total: "Total number of successful steals",
+  signups_total: "Total number of player sign-ups",
   started_total: "Total number of games started",
-  signups_total: "Total number of player signups",
+  throws_total: "Total number of times the dice where thrown",
+  banked_total: "Total number of times a value was banked. dice(s) selected",
+  busts_total: "Total number of time the throw resulted in busted hand",
+  steals_total: "Total number of steals from other players",
+  claims_total: "Total number of claims of a chip ",
 };
 type Metric = keyof typeof metrics;
 const keys = Object.keys(metrics) as any as Metric[];
@@ -24,7 +25,7 @@ export async function GET() {
     body += `# HELP ${key} ${metrics[key]}\n# TYPE ${name} counter\n${name} ${values[key]}\n\n`;
   }
   body += `# HELP Total number of turns\n# TYPE game_turns_total counter\ngame_turns_total ${
-    values.turn_bust_total + values.banked_total + values.steals_total
+    values.busts_total + values.steals_total + values.claims_total
   }\n\n`;
 
   return new Response(body, {

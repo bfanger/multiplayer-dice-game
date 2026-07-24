@@ -16,7 +16,12 @@ export const POST: RequestHandler = async (e) => {
     );
   }
   const game = await myTurnForRequestEvent(e);
+  const stole = game.chips[chipIndex]?.playerId;
   void publishGame(stealChip(game, chipIndex));
-  void redis.increment("steals_total");
+  if (stole) {
+    void redis.increment("steals_total");
+  } else {
+    void redis.increment("claims_total");
+  }
   return emptyResponse();
 };
