@@ -3,6 +3,7 @@ import type { RequestHandler } from "@sveltejs/kit";
 import { publishGame } from "$lib/server/multiplayer";
 import { stealChip } from "$lib/game-logic/game-fns";
 import { emptyResponse, myTurnForRequestEvent } from "$lib/server/server-fns";
+import redis from "$lib/services/redis";
 
 export const POST: RequestHandler = async (e) => {
   const { chipIndex } = await e.request.json();
@@ -16,5 +17,6 @@ export const POST: RequestHandler = async (e) => {
   }
   const game = await myTurnForRequestEvent(e);
   void publishGame(stealChip(game, chipIndex));
+  void redis.increment("steals_total");
   return emptyResponse();
 };

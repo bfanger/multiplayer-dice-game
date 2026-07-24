@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
-import 'varlock/auto-load';
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";

@@ -10,10 +10,11 @@ export default defineConfig({
   server: {
     watch: {
       usePolling: true,
+      interval: 1000,
     },
   },
   plugins: [
-    varlockVitePlugin(),
+    varlockVitePlugin({ ssrInjectMode: "resolved-env" }),
     devtoolsJson(),
     sveltekit(),
     FontaineTransform.vite({

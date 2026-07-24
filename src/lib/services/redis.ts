@@ -50,6 +50,11 @@ async function set(
   await client.set(key, data, config);
   void client.publish(key, data);
 }
+async function increment(key: string): Promise<number> {
+  await autoConnect();
+  return client.incr(key);
+}
+
 async function all<T>(query: string): Promise<T[]> {
   await autoConnect();
   const keys = await client.keys(query);
@@ -102,6 +107,7 @@ function subscribe<T>(
 const redis = {
   get,
   set,
+  increment,
   all,
   subscribe,
 };

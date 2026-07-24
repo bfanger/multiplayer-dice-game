@@ -1,12 +1,17 @@
 FROM node:24-slim AS build
 
-COPY . /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml /
 WORKDIR /app
 RUN npm install -g pnpm && pnpm install
-RUN npx svelte-kit sync && npm run build
+COPY . /app
+ENV REDIS_URL="redis://redis:6379"
+RUN npm run build
 RUN pnpm prune --prod
 
 FROM node:24-slim AS runtime
+
+ENV NODE_ENV="production"
+ENV REDIS_URL="redis://redis:6379"
 
 COPY --from=build /app/build/ /app/build
 COPY --from=build /app/dist/ /app/dist

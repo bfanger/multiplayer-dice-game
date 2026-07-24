@@ -1,7 +1,12 @@
 <script lang="ts">
   import { totalPoints } from "$lib/game-logic/chip-fns";
 
-  import type { Chip as ChipType, Game, Player as PlayerType, PlayerAvatar } from "$lib/game-logic/types";
+  import type {
+    Chip as ChipType,
+    Game,
+    Player as PlayerType,
+    PlayerAvatar,
+  } from "$lib/game-logic/types";
   import Avatar from "./Avatar/Avatar.svelte";
   import Stack from "./Stack.svelte";
 

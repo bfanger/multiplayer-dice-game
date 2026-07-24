@@ -1,7 +1,6 @@
 import { json, type RequestEvent } from "@sveltejs/kit";
 import type { Game, Player } from "$lib/game-logic/types";
 import { playerFromToken } from "$lib/game-logic/player-fns";
-
 import { getGameById } from "./multiplayer";
 
 export function emptyResponse(): Response {

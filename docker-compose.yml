@@ -10,9 +10,6 @@ services:
     build: .
     stop_grace_period: 1s
     restart: unless-stopped
-    environment:
-      - NODE_ENV=production
-      - REDIS_URL=redis://redis:6379
     ports:
       - 1888
     depends_on:
@@ -53,7 +50,6 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
-
 
   grafana:
     image: grafana/grafana:13.1-slim
