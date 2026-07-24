@@ -33,7 +33,6 @@ services:
       - ./caddy:/etc/caddy/
       - caddy_data:/data
       - caddy_config:/config
-      - ./static/lego:/lego
 
   node-exporter:
     image: prom/node-exporter:v1-distroless
@@ -43,6 +42,7 @@ services:
     image: prom/prometheus:v3-distroless
     restart: unless-stopped
     depends_on:
+      - app
       - caddy
       - node-exporter
     ports:
