@@ -3,6 +3,7 @@ volumes:
   caddy_config:
   caddy_data:
   prometheus-data:
+  grafana-data:
 
 services:
   app:
@@ -37,13 +38,27 @@ services:
       - caddy_config:/config
       - ./static/lego:/lego
 
+  node-exporter:
+    image: prom/node-exporter:v1-distroless
+    restart: unless-stopped
+
   prometheus:
-    image: prom/prometheus:v2.55.0
+    image: prom/prometheus:v3-distroless
     restart: unless-stopped
     depends_on:
       - caddy
+      - node-exporter
     ports:
       - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
+
+
+  grafana:
+    image: grafana/grafana:13.1-slim
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana-data:/var/lib/grafana
