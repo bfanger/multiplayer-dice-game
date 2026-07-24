@@ -2,6 +2,7 @@ volumes:
   redis-data:
   caddy_config:
   caddy_data:
+  prometheus-data:
 
 services:
   app:
@@ -11,6 +12,8 @@ services:
     environment:
       - NODE_ENV=production
       - REDIS_URL=redis://redis:6379
+    ports:
+      - 1888
     depends_on:
       - redis
 
@@ -33,3 +36,14 @@ services:
       - caddy_data:/data
       - caddy_config:/config
       - ./static/lego:/lego
+
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    restart: unless-stopped
+    depends_on:
+      - caddy
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus

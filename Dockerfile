@@ -16,5 +16,5 @@ COPY --from=build /app/package.json /app/package.json
 
 USER www-data
 
-EXPOSE 8080
+EXPOSE 1888
 CMD ["node", "/app/server.js"]

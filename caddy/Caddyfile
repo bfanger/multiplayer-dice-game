@@ -1,6 +1,10 @@
 dice-game.bfanger.nl {
-	reverse_proxy app:8080
+	reverse_proxy app:1888
 }
+
 :80 {
-	reverse_proxy app:8080
+	reverse_proxy app:1888
+}
+:2019 {
+	metrics
 }
