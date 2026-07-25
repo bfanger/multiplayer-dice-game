@@ -4,6 +4,7 @@ volumes:
   caddy_data:
   prometheus-data:
   grafana-data:
+  loki-data:
 
 services:
   app:
@@ -58,3 +59,9 @@ services:
       - prometheus
     volumes:
       - grafana-data:/var/lib/grafana
+
+  loki:
+    image: grafana/loki:3
+    restart: unless-stopped
+    volumes:
+      - loki-data:/loki

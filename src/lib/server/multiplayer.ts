@@ -31,23 +31,23 @@ export async function publishGame(game: Game): Promise<void> {
 /**
  * Multiplayer Server
  */
-export default function multiplayer(io: Server): void {
+function multiplayer(io: Server): void {
   redis.subscribe(
     "games/*",
     (game: Game) => {
       io.to(`games/${game.id}`).emit(`games/${game.id}`, game);
     },
     (err) => {
-      log.error("storage.subscribe()", err);
+      log.error(new Error("storage.subscribe() failed", { cause: err }));
     },
   );
   io.on("connection", (socket) => {
     let player: Player | undefined;
     if (socket.handshake.auth.token) {
       player = playerFromToken(socket.handshake.auth.token as string);
-      log(`${player.name} online`);
+      log.info(`${player.name} online`);
       socket.on("disconnect", () => {
-        log(player?.name, "offline");
+        log.info(`${player?.name} offline`);
       });
     }
     socket.on("join", async (id: string) => {
@@ -55,7 +55,7 @@ export default function multiplayer(io: Server): void {
         const room = `games/${id}`;
         await socket.join(room);
         if (!player) {
-          log(`Spectator watching ${id}`);
+          log.info(`Spectator watching ${id}`);
         } else {
           const game = await getGameById(id);
           if (!game) {
@@ -65,8 +65,10 @@ export default function multiplayer(io: Server): void {
             void socket.leave(room);
             void publishGame(
               updatePlayer(leaveGame, playerOffline(leavePlayer)),
-            ).catch((err) => log.error("publishGame():", err));
-            log(leavePlayer.name, "left", id);
+            ).catch((err) =>
+              log.error(new Error("publishGame() failed", { cause: err })),
+            );
+            log.info(`${leavePlayer.name} left ${id}`);
             leave = () => undefined;
           };
           socket.on("leave", async (leaveId) => {
@@ -74,9 +76,9 @@ export default function multiplayer(io: Server): void {
           });
           if (!socket.disconnected) {
             publishGame(updatePlayer(game, playerOnline(player))).catch((err) =>
-              log.error("publishGame():", err),
+              log.error(new Error("publishGame() failed", { cause: err })),
             );
-            log(player.name, "joined", id);
+            log.info(`${player.name} joined ${id}`);
             socket.once("disconnect", async () => {
               leave(await getGameById(id), player);
             });
@@ -89,3 +91,7 @@ export default function multiplayer(io: Server): void {
     });
   });
 }
+
+multiplayer.log = log;
+
+export default multiplayer;

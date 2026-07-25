@@ -15,5 +15,5 @@ multiplayer(new Server(server));
 app.use(handler);
 
 server.listen(PORT, () => {
-  process.stdout.write(`Multiplayer Dice Game running on :${PORT}\n`);
+  multiplayer.log.info(`Multiplayer Dice Game running on :${PORT}`);
 });

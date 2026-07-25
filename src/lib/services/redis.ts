@@ -18,16 +18,16 @@ async function autoConnect(): Promise<void> {
 }
 client.on("error", (err) => {
   if (errorOnce) {
-    log.error("Redis:", err);
+    log.error(new Error("Redis error", { cause: err }));
     errorOnce = false;
   }
 });
 client.on("connect", () => {
-  log("Redis up");
+  log.info("Redis up");
 });
 client.on("disconnect", () => {
   connectPromise = undefined;
-  log("Redis down");
+  log.info("Redis down");
 });
 async function get<T>(key: string): Promise<T | undefined>;
 async function get<T>(key: string, fallback: T): Promise<T>;

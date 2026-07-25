@@ -6,7 +6,6 @@
   import Button from "$lib/components/Button.svelte";
   import RegisterForm from "$lib/components/RegisterForm.svelte";
   import { resolve } from "$app/paths";
-  import { browser } from "$app/environment";
   import Modal from "$lib/components/Modal.svelte";
   import Avatar from "$lib/components/Avatar/Avatar.svelte";
   import Title from "$lib/components/Title.svelte";

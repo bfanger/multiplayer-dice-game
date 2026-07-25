@@ -5,6 +5,7 @@ WORKDIR /app
 RUN npm install -g pnpm && pnpm install
 COPY . /app
 ENV REDIS_URL="redis://redis:6379"
+ENV LOKI_URL="http://loki:3100"
 RUN npm run build
 RUN pnpm prune --prod
 
@@ -12,6 +13,7 @@ FROM node:24-slim AS runtime
 
 ENV NODE_ENV="production"
 ENV REDIS_URL="redis://redis:6379"
+ENV LOKI_URL="http://loki:3100"
 
 COPY --from=build /app/build/ /app/build
 COPY --from=build /app/dist/ /app/dist

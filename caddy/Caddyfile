@@ -5,9 +5,11 @@ dice-game.bfanger.nl {
 :80 {
 	reverse_proxy app:1888
 }
+
 :2019 {
 	metrics
 }
+
 grafana.bfanger.nl {
 	reverse_proxy grafana:3000	
 }

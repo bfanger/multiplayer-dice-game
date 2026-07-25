@@ -68,7 +68,7 @@ async function wrapped(
     if (typeof window === "undefined") {
       throw new Error("Missing config.fetch");
     }
-    fetch = window.fetch;
+    fetch = (window as any).fetch as Fetch;
   }
   init.method = method;
   init.headers = authenticated(init.headers);
