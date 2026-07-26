@@ -24,4 +24,5 @@ COPY --from=build /app/package.json /app/package.json
 USER www-data
 
 EXPOSE 1888
+HEALTHCHECK --start-period=3s CMD node -e "fetch('http://localhost:1888/health').then(r => {if(r.status !== 201) process.exit(1)})" || exit 1
 CMD ["node", "/app/server.js"]
