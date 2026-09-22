@@ -1,2 +1,5 @@
 allowBuilds:
   esbuild: false
+
+overrides:
+  cookie: 0.7.0
