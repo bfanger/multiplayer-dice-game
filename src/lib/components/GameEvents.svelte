@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { gameEvents } from "$lib/game-logic/game-fns";
-  import type { Game } from "$lib/game-logic/types";
+  import { gameEvents } from "#lib/game-logic/game-fns.js";
+  import type { Game } from "#lib/game-logic/types.js";
 
   type Props = {
     game: Game;

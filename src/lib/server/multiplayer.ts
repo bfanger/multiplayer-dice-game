@@ -1,13 +1,13 @@
 import type { Server } from "socket.io";
-import type { Game, Player } from "$lib/game-logic/types";
-import redis from "$lib/services/redis";
-import log from "$lib/log";
+import type { Game, Player } from "#lib/game-logic/types.js";
+import redis from "#lib/services/redis.js";
+import log from "#lib/log.js";
 import {
   playerFromToken,
   playerOffline,
   playerOnline,
-} from "$lib/game-logic/player-fns";
-import { updatePlayer } from "$lib/game-logic/game-fns";
+} from "#lib/game-logic/player-fns.js";
+import { updatePlayer } from "#lib/game-logic/game-fns.js";
 
 export function allGames(): Promise<Game[]> {
   return redis.all<Game>("games/*");

@@ -1,10 +1,14 @@
 <script lang="ts">
   import Stack from "./Stack.svelte";
-  import { chipPoints } from "$lib/game-logic/chip-fns";
-  import type { Chip as ChipType, Game, Player } from "$lib/game-logic/types";
+  import { chipPoints } from "#lib/game-logic/chip-fns.js";
+  import type {
+    Chip as ChipType,
+    Game,
+    Player,
+  } from "#lib/game-logic/types.js";
   import Chip from "./Chip/Chip.svelte";
-  import { chipDisabled } from "$lib/game-logic/game-fns";
-  import client from "$lib/client.svelte";
+  import { chipDisabled } from "#lib/game-logic/game-fns.js";
+  import client from "#lib/client.svelte.js";
 
   type Props = {
     game: Game;

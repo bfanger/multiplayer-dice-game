@@ -1,8 +1,12 @@
 <script lang="ts">
   /* eslint-disable @typescript-eslint/no-unsafe-call */
   import { flip } from "svelte/animate";
-  import client from "$lib/client.svelte";
-  import { chipPoints, chipStack, totalPoints } from "$lib/game-logic/chip-fns";
+  import client from "#lib/client.svelte.js";
+  import {
+    chipPoints,
+    chipStack,
+    totalPoints,
+  } from "#lib/game-logic/chip-fns.js";
   import {
     bankableDiceValues,
     bankedDice,
@@ -10,28 +14,28 @@
     diceScoreSubtotal,
     diceScoreValid,
     thrownDice,
-  } from "$lib/game-logic/dice-fns";
-  import { chipDisabled, hasHostAccess } from "$lib/game-logic/game-fns";
+  } from "#lib/game-logic/dice-fns.js";
+  import { chipDisabled, hasHostAccess } from "#lib/game-logic/game-fns.js";
   import type {
     Game,
     Player as PlayerType,
     Dice as DiceType,
-  } from "$lib/game-logic/types";
+  } from "#lib/game-logic/types.js";
   import Chip from "./Chip/Chip.svelte";
   import Dice from "./Dice/Dice.svelte";
   import Player from "./Player.svelte";
   import GameEvents from "./GameEvents.svelte";
   import Toast from "./Toast.svelte";
   import type { ShowToastFn } from "./Toast.svelte";
-  import { playerById } from "$lib/game-logic/player-fns";
+  import { playerById } from "#lib/game-logic/player-fns.js";
   import Button from "./Button.svelte";
   import RegisterForm from "./RegisterForm.svelte";
-  import { browser } from "$app/environment";
+  import { browser } from "$app/env";
   import Spinner from "./Spinner/Spinner.svelte";
   import Title from "./Title.svelte";
   import { goto } from "$app/navigation";
   import { resolve } from "$app/paths";
-  import Stack from "$lib/components/Stack.svelte";
+  import Stack from "#lib/components/Stack.svelte";
   import { fly } from "svelte/transition";
   import { page } from "$app/state";
   import DiceTray from "./DiceTray.svelte";
@@ -238,10 +242,8 @@
     </div>
   {/if}
 </main>
-<div class="toasts">
-  <Toast bind:showToast />
-</div>
 
+<div class="toasts"><Toast bind:showToast /></div>
 <GameEvents {game} onbust={onBust} onturn={onTurn} />
 
 <style>

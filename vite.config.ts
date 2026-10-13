@@ -1,7 +1,9 @@
+import adapter from "@sveltejs/adapter-node";
+import runesMode from "./src/runesMode.js";
 import { varlockVitePlugin } from "@varlock/vite-integration";
 import { sveltekit } from "@sveltejs/kit/vite";
 import devtoolsJson from "vite-plugin-devtools-json";
-import { defineConfig } from "vitest/config";
+import { defineConfig, type Plugin } from "vitest/config";
 import { FontaineTransform } from "fontaine";
 import { Server } from "socket.io";
 import type { Server as HttpServer } from "http";
@@ -14,13 +16,20 @@ export default defineConfig({
     },
   },
   plugins: [
-    varlockVitePlugin({ ssrInjectMode: "resolved-env" }),
-    devtoolsJson(),
-    sveltekit(),
-    FontaineTransform.vite({
-      fallbacks: {
-        "Poetsen One": ["Arial", "sans-serif"],
+    (varlockVitePlugin({ ssrInjectMode: "resolved-env" }) as Plugin[]).map(
+      (p) => {
+        delete p.transformIndexHtml;
+        return p;
       },
+    ),
+    devtoolsJson(),
+    sveltekit({
+      preprocess: runesMode(),
+      adapter: adapter({ precompress: true }),
+      experimental: { remoteFunctions: true },
+    }),
+    FontaineTransform.vite({
+      fallbacks: { "Poetsen One": ["Arial", "sans-serif"] },
     }),
     {
       name: "multiplayer",

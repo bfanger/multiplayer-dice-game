@@ -1,4 +1,4 @@
-import redis from "$lib/services/redis";
+import redis from "#lib/services/redis.js";
 
 const metrics = {
   signups_total: "Total number of player sign-ups",

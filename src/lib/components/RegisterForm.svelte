@@ -1,6 +1,6 @@
 <script lang="ts">
-  import api from "$lib/services/api";
-  import auth from "$lib/services/auth.svelte";
+  import api from "#lib/services/api.js";
+  import auth from "#lib/services/auth.svelte.js";
   import Button from "./Button.svelte";
   import TextInput from "./TextInput.svelte";
 

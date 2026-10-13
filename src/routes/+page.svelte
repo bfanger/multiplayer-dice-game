@@ -1,14 +1,14 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import client from "$lib/client.svelte";
-  import Spinner from "$lib/components/Spinner/Spinner.svelte";
-  import api from "$lib/services/api";
-  import Button from "$lib/components/Button.svelte";
-  import RegisterForm from "$lib/components/RegisterForm.svelte";
+  import client from "#lib/client.svelte.js";
+  import Spinner from "#lib/components/Spinner/Spinner.svelte";
+  import api from "#lib/services/api.js";
+  import Button from "#lib/components/Button.svelte";
+  import RegisterForm from "#lib/components/RegisterForm.svelte";
   import { resolve } from "$app/paths";
-  import Modal from "$lib/components/Modal.svelte";
-  import Avatar from "$lib/components/Avatar/Avatar.svelte";
-  import Title from "$lib/components/Title.svelte";
+  import Modal from "#lib/components/Modal.svelte";
+  import Avatar from "#lib/components/Avatar/Avatar.svelte";
+  import Title from "#lib/components/Title.svelte";
 
   async function startNewGame() {
     const id = await client.createGame(); // @todo report error

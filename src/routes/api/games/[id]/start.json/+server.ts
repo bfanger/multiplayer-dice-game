@@ -3,10 +3,10 @@ import {
   emptyResponse,
   gameForRequestEvent,
   playerForRequestEvent,
-} from "$lib/server/server-fns";
-import { hasHostAccess, startGame } from "$lib/game-logic/game-fns";
-import { publishGame } from "$lib/server/multiplayer";
-import redis from "$lib/services/redis";
+} from "#lib/server/server-fns.js";
+import { hasHostAccess, startGame } from "#lib/game-logic/game-fns.js";
+import { publishGame } from "#lib/server/multiplayer.js";
+import redis from "#lib/services/redis.js";
 
 export const POST: RequestHandler = async (e) => {
   const player = playerForRequestEvent(e);

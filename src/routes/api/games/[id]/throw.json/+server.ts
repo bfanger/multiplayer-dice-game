@@ -1,8 +1,11 @@
 import type { RequestHandler } from "@sveltejs/kit";
-import { publishGame } from "$lib/server/multiplayer";
-import { throwDiceInGame } from "$lib/game-logic/game-fns";
-import { emptyResponse, myTurnForRequestEvent } from "$lib/server/server-fns";
-import redis from "$lib/services/redis";
+import { publishGame } from "#lib/server/multiplayer.js";
+import { throwDiceInGame } from "#lib/game-logic/game-fns.js";
+import {
+  emptyResponse,
+  myTurnForRequestEvent,
+} from "#lib/server/server-fns.js";
+import redis from "#lib/services/redis.js";
 
 export const POST: RequestHandler = async (e) => {
   const game = await myTurnForRequestEvent(e);

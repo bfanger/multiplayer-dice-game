@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { PlayerAvatar } from "$lib/game-logic/types";
+  import type { PlayerAvatar } from "#lib/game-logic/types.js";
 
   import chickUrl from "../../../assets/avatars/chick.png";
   import roosterUrl from "../../../assets/avatars/rooster.png";

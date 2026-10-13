@@ -1,4 +1,4 @@
-import api from "$lib/services/api";
+import api from "#lib/services/api.js";
 import type { PageLoad } from "./$types";
 
 export const load: PageLoad = async ({ params, fetch }) => {

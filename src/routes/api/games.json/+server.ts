@@ -1,8 +1,7 @@
-import { json } from "@sveltejs/kit";
-import { createGame, joinGame } from "$lib/game-logic/game-fns";
-import { allGames, publishGame } from "$lib/server/multiplayer";
-import type { Player } from "$lib/game-logic/types";
-import { playerForRequestEvent } from "$lib/server/server-fns";
+import { createGame, joinGame } from "#lib/game-logic/game-fns.js";
+import { allGames, publishGame } from "#lib/server/multiplayer.js";
+import type { Player } from "#lib/game-logic/types.js";
+import { playerForRequestEvent } from "#lib/server/server-fns.js";
 import type { RequestHandler } from "./$types";
 
 export type GameListing = {
@@ -18,7 +17,7 @@ export const GET: RequestHandler = async () => {
       game.players.some((player) => player.connected),
   );
 
-  return json(
+  return Response.json(
     active.map((game) => ({
       id: game.id,
       started: game.turn !== undefined,
@@ -31,5 +30,5 @@ export const POST: RequestHandler = (e) => {
   const player = playerForRequestEvent(e);
   const game = joinGame(createGame(), player);
   void publishGame(game);
-  return json({ id: game.id });
+  return Response.json({ id: game.id });
 };

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { bankableDiceValues } from "$lib/game-logic/dice-fns";
-  import type { Dice as DiceType, Game } from "$lib/game-logic/types";
+  import { bankableDiceValues } from "#lib/game-logic/dice-fns.js";
+  import type { Dice as DiceType, Game } from "#lib/game-logic/types.js";
   import { tick } from "svelte";
   import Dice from "./Dice/Dice.svelte";
   import { shuffle } from "lodash-es";

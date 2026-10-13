@@ -2,7 +2,7 @@ import type { Game, Player } from "./game-logic/types";
 import api from "./services/api";
 import auth from "./services/auth.svelte";
 import type { Socket } from "socket.io";
-import { browser } from "$app/environment";
+import { browser } from "$app/env";
 import { untrack } from "svelte";
 
 type Handshake = { auth: { token?: string } };

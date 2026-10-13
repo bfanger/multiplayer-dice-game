@@ -7,14 +7,12 @@ import path from "node:path";
  */
 export default function runesMode() {
   const srcFolder = path.dirname(fileURLToPath(import.meta.url));
-  return {
+  /** @type {import('svelte/compiler').PreprocessorGroup} */
+  const processor = {
     name: "runesMode",
-    /**
-     * @param {{content:string, filename:string}} options
-     */
     markup({ content, filename }) {
       if (
-        filename.startsWith(srcFolder) &&
+        filename?.startsWith(srcFolder) &&
         !content.includes("<svelte:options")
       ) {
         content += `\n<svelte:options runes />`;
@@ -22,4 +20,5 @@ export default function runesMode() {
       return { code: content };
     },
   };
+  return processor;
 }

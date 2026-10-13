@@ -1,11 +1,11 @@
 import type { RequestHandler } from "@sveltejs/kit";
-import { joinGame } from "$lib/game-logic/game-fns";
-import { publishGame } from "$lib/server/multiplayer";
+import { joinGame } from "#lib/game-logic/game-fns.js";
+import { publishGame } from "#lib/server/multiplayer.js";
 import {
   emptyResponse,
   gameForRequestEvent,
   playerForRequestEvent,
-} from "$lib/server/server-fns";
+} from "#lib/server/server-fns.js";
 
 export const POST: RequestHandler = async (e) => {
   const player = playerForRequestEvent(e);

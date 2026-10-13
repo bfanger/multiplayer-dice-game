@@ -1,10 +1,10 @@
-import { json, type RequestEvent } from "@sveltejs/kit";
-import type { Game, Player } from "$lib/game-logic/types";
-import { playerFromToken } from "$lib/game-logic/player-fns";
+import type { RequestEvent } from "@sveltejs/kit";
+import type { Game, Player } from "#lib/game-logic/types.js";
+import { playerFromToken } from "#lib/game-logic/player-fns.js";
 import { getGameById } from "./multiplayer";
 
 export function emptyResponse(): Response {
-  return json(null);
+  return Response.json(null);
 }
 export function playerForRequestEvent({ request }: RequestEvent): Player {
   const auth = request.headers.get("authorization");

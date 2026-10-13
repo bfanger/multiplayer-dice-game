@@ -1,11 +1,11 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { resolve } from "$app/paths";
-  import client from "$lib/client.svelte.js";
-  import Board from "$lib/components/Board.svelte";
-  import Button from "$lib/components/Button.svelte";
-  import Modal from "$lib/components/Modal.svelte";
-  import Title from "$lib/components/Title.svelte";
+  import client from "#lib/client.svelte.js";
+  import Board from "#lib/components/Board.svelte";
+  import Button from "#lib/components/Button.svelte";
+  import Modal from "#lib/components/Modal.svelte";
+  import Title from "#lib/components/Title.svelte";
 
   let { data } = $props();
 
